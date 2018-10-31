@@ -3,4 +3,4 @@ Code associated with the course Software Evolution of the University of Amsterda
 
 Group  
 * Petar Kostic
-* Joren Wijnmaaen
+* Joren Wijnmaalen
