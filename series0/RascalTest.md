@@ -31,7 +31,7 @@ public int count(list[str] text) {
    return n; 
 }
 ```
-Run this as `count(text) == 2;`, which should return `2`.
+Run this as `count(text) == 2;`, which should return `true`.
 
 ### Complete this function at `<?>` so that it returns the strings that contain `"o"` in a list.
 ```rascal
