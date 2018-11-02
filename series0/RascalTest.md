@@ -61,3 +61,6 @@ public bool isPalindrome(list[str] words){
 } 
 ```
 To test, run `isPalindrome(["a", "b", "b", "a"]) == true;`, which should return `true`.
+
+### Answers
+My answers can be found here
