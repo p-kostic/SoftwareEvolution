@@ -63,4 +63,4 @@ public bool isPalindrome(list[str] words){
 To test, run `isPalindrome(["a", "b", "b", "a"]) == true;`, which should return `true`.
 
 ### Answers
-My answers can be found here
+My answers can be found [here](https://github.com/p-kostic/SoftwareEvolution/blob/master/src/RascalTest/Test.rsc)
