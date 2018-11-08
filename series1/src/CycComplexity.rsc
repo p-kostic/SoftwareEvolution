@@ -20,11 +20,12 @@ void getCyclomaticFromAST() {
 	my_classes = classes(mmm);
 	my_methods = methods(mmm);
 	println(my_methods);
-	for(loc method <- my_methods) {
-		Declaration ast = createAstFromFile(method, true);
-		println(ast);
+	for(loc class <- my_classes) {
+		Declaration ast = createAstFromFile(class, true);
+		//println(ast);
 		visit(ast) {
 			case \method(_,_,_,_,impl): { 
+				println("hallo");
 				int c = cyclomaticComplexity(impl);
 				println(c);
 				//if (c <= 10) {
