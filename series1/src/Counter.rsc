@@ -10,22 +10,21 @@ import Prelude;
 /* 
 	Heitlager, I., Kuipers, T., & Visser, J. (2007, September). 
 	A practical model for measuring maintainability. In null (pp. 30-39). IEEE.
+	
+	"Simple line of code metric (LOC), which counts all lines of source code that are not comments or blank lines."
 */
 
-//  simple line of code metric (LOC), which counts all lines of source code that are not comment or blank lines
-
-
+// HACK 
 // A Declaration method has
 // Type \return, str name, list[Declaration] parameters, list[Expression] exception, and Statement impl
-// If we visit the decleration and see where it falls under our project (l.scheme == project);
-// We add these to a set, where there can be no duplicates  
+// If we visit the declaration for each location and see where it falls under our project (l.scheme == project);
+// We add these to a set, where there can be no duplicates
+// The size of this set will be equal to the number of begin and end lines.   
 public int countL(Declaration d) {
     set[int] methodLines = {};
 	visit(d) {
 		case /loc l: {
 			if (l.scheme == "project") {
-				iprintln(l.begin.line);
-				iprintln(l.end.line);
 				methodLines += {l.begin.line};
 				methodLines += {l.end.line};
 			}
