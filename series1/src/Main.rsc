@@ -28,34 +28,4 @@ void countMethods(){
 		println("<m> : <my_methods[m]>");
 }
 
-void countLOC(){
-	M3 mmm = createM3FromEclipseProject(|project://SimpleJava|);
-	my_classes = {e | <c, e> <- declaredTopTypes(mmm), isClass(e)};
-	list[int] lines = [size(readFileLines(e)) | e <- my_classes];
-	println(sum(lines));
-	
-}
-
-
-//void getCyclomaticFromAST(){
-//	M3 mmm = createM3FromEclipseProject(|project://SimpleJava|);
-//	my_classes = {e | <c, e> <- declaredTopTypes(mmm), isClass(e)};
-//	for(class <- classes){
-//		ast = createAstFromFile(class);
-//		visit(ast){
-//			case method(type, name, params, exceptions, impl):
-//				cyclomaticComplexity(impl);
-//		}
-//	}
-//}
-//
-//
-//int cyclomaticComplexity(Statement impl){
-//	int complexity = 0;
-//	switch(impl){
-//		case if(cond, then): complexity += 1;
-//	}
-//	
-//	return complexity;
-//}
 

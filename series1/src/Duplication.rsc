@@ -5,9 +5,6 @@ import Set;
 import util::Math;
 import IO;
 
-/// <summary>
-
-// </summary>
 public int FindDuplicates(list[str] lines, int windowsize){
 	return RabinKarp(lines, windowsize);
 }
