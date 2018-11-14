@@ -32,3 +32,41 @@ public int countL(Declaration d) {
 	}
 	return size(methodLines);
 }
+
+public int countAllLOC(M3 mmm){
+	my_classes = {e | <c, e> <- declaredTopTypes(mmm), isClass(e)};
+	list[str] lines = [*readFileLines(e) | e <- my_classes];
+	list[str] filteredLines = [];
+	
+	
+	for(line <- lines){
+		bool blockComment = false;
+		line = trim(line);
+		
+		if(line == ""){
+			continue;
+		}
+	
+		if(/^\/\// := line){
+			continue;
+		}
+		
+		if(/^\/\*/ := line){
+			blockComment = true;
+			continue;
+		}
+		
+		if(/^\*\// := line){
+			blockComment = false;
+			continue;
+		}
+		
+		if(blockComment){
+			continue;
+		}
+		
+		filteredLines += line;
+	}
+	
+	return size(filteredLines);
+}

@@ -12,17 +12,12 @@ loc smallSqlProject = |project://smallsql0.21_src|;
 
 
 void Main(){
-	M3 mmm = createM3FromEclipseProject(smallSqlProject);
-	iprint(mmm);
-	
-	return;
-	
-	
+	M3 mmm = createM3FromEclipseProject(project);
 	my_classes = {e | <c, e> <- declaredTopTypes(mmm), isClass(e)};
 	list[str] lines = [*readFileLines(e) | e <- my_classes];
 	filteredLines = [trim(e) | e <- lines, !isEmpty(trim(e))];
-	println(filteredLines);
-	println(FindDuplicates(filteredLines, 2));
+	//println(filteredLines);
+	println(FindDuplicates(filteredLines, 6));
 
 }
 

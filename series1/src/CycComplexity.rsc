@@ -43,10 +43,8 @@ void getCyclomaticFromAST() {
 str determineRiskRank() {
 	
 	M3 mmm = createM3FromEclipseProject(|project://SimpleJava|);
-	my_classes = {e | <c, e> <- declaredTopTypes(mmm), isClass(e)};
-	list[int] lines = [size(readFileLines(e)) | e <- my_classes];
-	int totalLOC = sum(lines);
-
+	int totalLOC = countAllLOC(mmm);
+	println("Total Project LOC: <totalLOC>");
 	// For each risk leve, calculate what percentage of lines of code it is
 	
 	// To be rated as a '++' system
