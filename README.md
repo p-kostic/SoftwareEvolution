@@ -92,7 +92,7 @@ Thus, a well-designed system ('+') should not have more than 5% code duplication
 ## Unit size
 Unit size uses the simple lines of code metric (i.e. all lines of source code that are not comment or blank lines). The risk categories and scoring guidelines are similar to those for complexity per unit, except that the particular threshold values are different.
 
-## Unit Testing
+## Bonus: Unit Testing
 Unit test coverage: 
 
 | Rank | Unit Test Coverage |
@@ -114,7 +114,9 @@ To arrive at a system-level score, a weighted average is computed of each source
 | Rank          |        |                     |             |           |              |   |
 | Analysability | x      |                     | x           | x         | x            |   |
 | changeability |        | x                   | x           |           |              |   |
-| stability     |        |                     |             |           | x            |   |
+| stability*    |        |                     |             |           | x            |   |
 | testability   |        | x                   |             | x         | x            |   |
+
+\* is bonus
 
 When a particular property is deemed to have a strong influence on a particular characteristic, a cross is drawn in the.corresponding cell.
