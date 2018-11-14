@@ -94,6 +94,7 @@ Unit size uses the simple lines of code metric (i.e. all lines of source code th
 
 ## Unit Testing
 Unit test coverage: 
+
 | Rank | Unit Test Coverage |
 |------|--------------------|
 | ++   | 95-100%            |
