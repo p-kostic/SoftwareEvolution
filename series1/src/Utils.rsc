@@ -21,25 +21,25 @@ public list[str] filterLines(list[str] lines) {
 	for(line <- lines) {
 		line = trim(line);
 		
-		if(line == ""){
+		if(line == "") {
 			continue;
 		}
 	
-		if(/^\/\// := line){
+		if(/^\/\// := line) {
 			continue;
 		}
 		
-		if(/^\/\*/ := line){
+		if(/^\/\*/ := line) {
 			blockComment = true;
 			continue;
 		}
 		
-		if(/^\*\// := line){
+		if(/^\*\// := line) {
 			blockComment = false;
 			continue;
 		}
 		
-		if(blockComment){
+		if(blockComment) {
 			continue;
 		}
 		
@@ -48,7 +48,7 @@ public list[str] filterLines(list[str] lines) {
 	return filteredLines;
 }
 
-public int countAllLOC(M3 mmm){
+public int countAllLOC(M3 mmm) {
 	my_classes = {e | <c, e> <- declaredTopTypes(mmm), isClass(e)};
 	list[str] lines = [*readFileLines(e) | e <- my_classes];	
 	return size(filterLines(lines));
