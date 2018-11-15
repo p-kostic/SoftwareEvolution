@@ -16,9 +16,9 @@ import IO;
 */
 public list[str] filterLines(list[str] lines) {
 	list[str] filteredLines = [];
+	bool blockComment = false;
 	
 	for(line <- lines) {
-		bool blockComment = false;
 		line = trim(line);
 		
 		if(line == ""){
