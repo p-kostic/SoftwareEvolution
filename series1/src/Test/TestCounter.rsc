@@ -7,7 +7,9 @@ import lang::java::m3::AST;
 import lang::java::jdt::m3::Core;
 import lang::java::jdt::m3::AST;
 
-bool TestFilterLines() {
+M3 mmm = createM3FromEclipseProject(|project://SimpleJava|);
+
+test bool TestFilterLinesCase1() {
 	// A case where all 3 things we check for in the implementation occur
 	list[str] goodLinesToFilter = ["a",			   // 1
 							       "b",			   // 2
@@ -24,8 +26,10 @@ bool TestFilterLines() {
 								   "a",			   // 8
 								   "b"			   // 9
 								   ];
-	bool case1 = size(filterLines(goodLinesToFilter)) == 9;
-	
+	return size(filterLines(goodLinesToFilter)) == 9;
+}
+
+test bool TestFilterLinesCase2() {
 	// A case with a JavaDoc example with stars for the multiline comment
 	list[str] javaDoc = [
 		"/**************",
@@ -46,15 +50,26 @@ bool TestFilterLines() {
 		"}",                                        // 3
 		"/* TestComment */"
 	];
-	bool case2 = size(filterLines(javaDoc)) == 3;
-	
+	return size(filterLines(javaDoc)) == 3;
+}
+
+test bool TestFilterLinesCase3() {
 	// An edgecase where the comment is commented out.
 	list[str] edgeCase = [
 		"// /*",            // ignore
 		"some_code();",	    
 		"// */"];			// ignore
-	bool case3 = size(filterLines(edgeCase)) == 1;
-			
-	return case1 && case2 && case3;
+	return size(filterLines(edgeCase)) == 1;
 }
 
+test bool TestCountAllLOCCase1() {
+	// If counted by hand, we get 31 for the SimpleJava project. Check if the implementation is correct
+	return countAllLOC(mmm) == 31;
+}
+
+test bool TestCountAllLOCCase2() {
+	my_classes = {e | <c, e> <- declaredTopTypes(mmm), isClass(e)};
+	list[str] lines = [*readFileLines(e) | e <- my_classes];	
+	int filteredLines = countAllLOC(mmm);
+	return filteredLines > 0 && filteredLines < size(lines); 
+}
