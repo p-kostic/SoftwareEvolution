@@ -13,17 +13,15 @@ import lang::java::jdt::m3::Core;
 import lang::java::jdt::m3::AST;
 
 loc project = |project://SimpleJava|;
-loc smallSqlProject = |project://smallsql0.21_src|;
-
+// loc smallSqlProject = |project://smallsql0.21_src|;
 
 void Main(){
 	// Global Variables
-	M3 mmm = createM3FromEclipseProject(smallSqlProject);
+	M3 mmm = createM3FromEclipseProject(project);
 	my_classes = {e | <c, e> <- declaredTopTypes(mmm), isClass(e)};
 	
 	int totalLOC = countAllLOC(mmm);
-	set[Declaration] asts = createAstsFromEclipseProject(|project://SimpleJava|, true);
-	
+	set[Declaration] asts = createAstsFromEclipseProject(project, true);
 	
 	// Volume
 	str volumeRank = GetVolumeRank(totalLOC);

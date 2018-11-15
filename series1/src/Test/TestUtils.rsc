@@ -63,6 +63,15 @@ test bool TestFilterLinesCase3() {
 	return size(filterLines(edgeCase)) == 1;
 }
 
+test bool TestFilterLinesCase4() {
+	list[str] edgeCase = [
+		"/* someCode(); */", // Ignore
+		"someCode();",		 // 1
+		"someCode();"		 // 2
+	];
+	return size(filterLines(edgeCase)) == 2;
+}
+
 test bool TestCountAllLOCCase1() {
 	// If counted by hand, we get 31 for the SimpleJava project. Check if the implementation is correct
 	return countAllLOC(mmm) == 31;

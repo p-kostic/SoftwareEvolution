@@ -16,6 +16,7 @@ import IO;
 */
 public list[str] filterLines(list[str] lines) {
 	list[str] filteredLines = [];
+
 	bool blockComment = false;
 	
 	for(line <- lines) {
@@ -29,8 +30,10 @@ public list[str] filterLines(list[str] lines) {
 			continue;
 		}
 		
-		if(/^\/\*/ := line) {
+		if(/^\/\*/ := line) { 
 			blockComment = true;
+			if (/\*\// := line)
+				blockComment = false;
 			continue;
 		}
 		

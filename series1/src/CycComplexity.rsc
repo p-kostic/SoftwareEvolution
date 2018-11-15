@@ -10,46 +10,40 @@ import util::Math;
 // Our own modules
 import Utils;
 
-// Tuple data structure to keep track.
-tuple[str name, int cc, int lines] simple   = <"simple"    , 0, 0>;
-tuple[str name, int cc, int lines] moderate = <"moderate"  , 0, 0>;
-tuple[str name, int cc, int lines] high     = <"high"      , 0, 0>;
-tuple[str name, int cc, int lines] veryHigh = <"very high", 0, 0>;   
-
-str getCyclomaticFromAST(M3 mmm, set[Declaration] asts, int totalLOC) {	
+str getCyclomaticFromAST(M3 mmm, set[Declaration] asts, int totalLOC) {
+	
+	map[str, tuple[int cc, int lines]] ranks = ("simple"    : <0,0>,
+										        "moderate"  : <0,0>,
+										        "high"      : <0,0>,
+										        "very high" : <0,0>);
+	
 	// Get the cyclomatic complexity of each unit. Visit is bottom-up by default
 	visit(asts) {
 		// TODO: does this include constructors???
 		case m:method(_,name,_,_,impl): {
 			int cc = cyclomaticComplexity(impl);
-			str level = determineCCAndLevelPerUnit(cc);
 			int sloc = countL(m);
-			//println("Method <name> with <sloc> lines of code");
-			addLOCToTuples(level, countL(m));
+			str level = determineCCAndLevelPerUnit(cc);
+			ranks[level].cc    += 1;
+			ranks[level].lines += sloc;
+			// println("Method <name> with complexity <cc> and <sloc> lines of code");
 		}
 	};
-	
-	//println(simple);
-	//println(moderate);
-	//println(high);
-	//println(veryHigh);
-	return determineRiskRank(totalLOC);
+	// iprintln(ranks);
+	return determineRiskRank(totalLOC, ranks);
 }
 
-str determineRiskRank(int totalLOC) {
-	// TODO: percent from math library returns int... so is it precise enough for our usecase? 
-	int percentageSimple   = percent(simple.lines  , totalLOC);
-	int percentageModerate = percent(moderate.lines, totalLOC);
-	int percentageHigh 	   = percent(high.lines    , totalLOC);
-	int percentageVeryHigh = percent(veryHigh.lines, totalLOC);
+str determineRiskRank(int totalLOC, map[str, tuple[int cc, int lines]] ranks) {
+	real percentageSimple   = toReal(ranks["simple"].lines)    / toReal(totalLOC) * 100;
+	real percentageModerate = toReal(ranks["moderate"].lines)  / toReal(totalLOC) * 100;
+	real percentageHigh 	= toReal(ranks["high"].lines)      / toReal(totalLOC) * 100;
+	real percentageVeryHigh = toReal(ranks["very high"].lines) / toReal(totalLOC) * 100;
 	
-	int percentageTotal = percentageSimple + percentageModerate + percentageHigh + percentageVeryHigh;
-	//println("Percentage Distribution: simple: <percentageSimple>%, moderate: <percentageModerate>%, high: <percentageHigh>%, very high: <percentageVeryHigh>%");
-	//println("Total percentage: <percentageTotal>%, should be 100%");
+	real percentageTotal = percentageSimple + percentageModerate + percentageHigh + percentageVeryHigh;
+	println("Percentage Distribution: simple: <percentageSimple>%, moderate: <percentageModerate>%, high: <percentageHigh>%, very high: <percentageVeryHigh>%");
+	println("Total percentage: <percentageTotal>% methods");
 	
-	
-	// TODO, dit moet beter kunnen, minder complexity (ironic lol)
-	if (veryHigh.lines > 0) {
+	if (ranks["very high"].lines > 0) {
 		// Guaranteed to be at least a '-' system
 		
 		if (percentageModerate <= 50 && percentageHigh <= 15 && percentageVeryHigh <= 5) {
@@ -71,30 +65,16 @@ str determineRiskRank(int totalLOC) {
 
 str determineCCAndLevelPerUnit(int unitComplexity) {
 	if (unitComplexity > 50) {
-		veryHigh.cc += 1;
 		return "very high";
 	}
 	else if (unitComplexity > 20) {
-		high.cc += 1;
 		return "high";
 	}
 	else if (unitComplexity > 10) {
-		moderate.cc += 1;
 		return "moderate";
 	}
 	else if (unitComplexity >= 0) {
-		simple.cc += 1;
 		return "simple";
-	}
-	return ""; // Should not happen
-}
-
-void addLOCToTuples(str level, int unitCount) {
-	switch (level) {
-		case "very high": veryHigh.lines += unitCount;
-		case "high"		: high.lines     += unitCount;
-		case "moderate" : moderate.lines += unitCount;	
-		case "simple"   : simple.lines   += unitCount;
 	}
 }
 
