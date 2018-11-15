@@ -7,6 +7,7 @@ import lang::java::m3::AST;
 import lang::java::jdt::m3::Core;
 import lang::java::jdt::m3::AST;
 
+// Simple Java Testing project for the unit tests that need either ASTs or M3s
 M3 mmm = createM3FromEclipseProject(|project://SimpleJava|);
 
 test bool TestFilterLinesCase1() {
@@ -70,8 +71,15 @@ test bool TestCountAllLOCCase1() {
 test bool TestCountAllLOCCase2() {
 	// To check if countAllLoc plays nicely with filteredLines,
 	// filteredLines should be in-between size 0 and the maximum size.
+	// countAllLOC is guaranteed to be 
 	my_classes = {e | <c, e> <- declaredTopTypes(mmm), isClass(e)};
 	list[str] lines = [*readFileLines(e) | e <- my_classes];	
 	int filteredLines = countAllLOC(mmm);
 	return filteredLines > 0 && filteredLines < size(lines); 
+}
+
+// From a simple example, test if it does indeed count everything for this AST
+test bool TestCountLCase1() {
+	Declaration d = createAstFromFile(|project://SimpleJava/src/Test.java|, true);
+	return countL(d) == 5;
 }
