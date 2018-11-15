@@ -8,7 +8,7 @@ import lang::java::jdt::m3::AST;
 import util::Math;
 
 // Our own modules
-import Counter;
+import Utils;
 
 // Tuple data structure to keep track.
 tuple[str name, int cc, int lines] simple   = <"simple"    , 0, 0>;
@@ -16,11 +16,7 @@ tuple[str name, int cc, int lines] moderate = <"moderate"  , 0, 0>;
 tuple[str name, int cc, int lines] high     = <"high"      , 0, 0>;
 tuple[str name, int cc, int lines] veryHigh = <"very high", 0, 0>;   
 
-void getCyclomaticFromAST() {	
-	// Create model and ASTs
-	M3 mmm = createM3FromEclipseProject(|project://SimpleJava|);
-	set[Declaration] asts = createAstsFromEclipseProject(|project://SimpleJava|, true);
-
+str getCyclomaticFromAST(M3 mmm, set[Declaration] asts, int totalLOC) {	
 	// Get the cyclomatic complexity of each unit. Visit is bottom-up by default
 	visit(asts) {
 		// TODO: does this include constructors???
@@ -28,48 +24,19 @@ void getCyclomaticFromAST() {
 			int cc = cyclomaticComplexity(impl);
 			str level = determineCCAndLevelPerUnit(cc);
 			int sloc = countL(m);
-			println("Method <name> with <sloc> lines of code");
+			//println("Method <name> with <sloc> lines of code");
 			addLOCToTuples(level, countL(m));
 		}
 	};
 	
-	println(simple);
-	println(moderate);
-	println(high);
-	println(veryHigh);
-	println(determineRiskRank());
+	//println(simple);
+	//println(moderate);
+	//println(high);
+	//println(veryHigh);
+	return determineRiskRank(totalLOC);
 }
 
-str determineRiskRank() {
-	
-	M3 mmm = createM3FromEclipseProject(|project://SimpleJava|);
-	int totalLOC = countAllLOC(mmm);
-	println("Total Project LOC: <totalLOC>");
-	// For each risk leve, calculate what percentage of lines of code it is
-	
-	// To be rated as a '++' system
-	// -- No more than 25% LOC with moderate risk
-	// -- No more than 0% LOC with high risk 
-	// -- No more than 0% LOC with very high risk
-	
-	// To be rated as a '+' system
-	// -- No more than 30% LOC with moderate risk
-	// -- No more than 5% LOC with high risk
-	// -- No more than 0% LOC with very high risk
-	
-	// To be rated as a 'o' system
-	// -- No more than 40% LOC with moderate risk 
-	// -- No more than 10% LOC with high risk
-	// -- No more than 0% LOC with very high risk
-	
-	// To be rated as a '-' system
-	// -- No more than 50% LOC with moderate risk
-	// -- No more than 15% LOC with high risk
-	// -- No more than 5% LOC with very high risk
-	
-	// To be rated as a '--' system 
-	// -- Even worse than the above
-	
+str determineRiskRank(int totalLOC) {
 	// TODO: percent from math library returns int... so is it precise enough for our usecase? 
 	int percentageSimple   = percent(simple.lines  , totalLOC);
 	int percentageModerate = percent(moderate.lines, totalLOC);
@@ -77,8 +44,8 @@ str determineRiskRank() {
 	int percentageVeryHigh = percent(veryHigh.lines, totalLOC);
 	
 	int percentageTotal = percentageSimple + percentageModerate + percentageHigh + percentageVeryHigh;
-	println("Percentage Distribution: simple: <percentageSimple>%, moderate: <percentageModerate>%, high: <percentageHigh>%, very high: <percentageVeryHigh>%");
-	println("Total percentage: <percentageTotal>%, should be 100%");
+	//println("Percentage Distribution: simple: <percentageSimple>%, moderate: <percentageModerate>%, high: <percentageHigh>%, very high: <percentageVeryHigh>%");
+	//println("Total percentage: <percentageTotal>%, should be 100%");
 	
 	
 	// TODO, dit moet beter kunnen, minder complexity (ironic lol)

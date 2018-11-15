@@ -1,4 +1,4 @@
-module Counter
+module Utils
 
 import lang::java::m3::Core;
 import lang::java::m3::AST;
@@ -17,8 +17,8 @@ import IO;
 public list[str] filterLines(list[str] lines) {
 	list[str] filteredLines = [];
 	
+	bool blockComment = false;
 	for(line <- lines) {
-		bool blockComment = false;
 		line = trim(line);
 		
 		if(line == ""){
