@@ -1,7 +1,7 @@
-module Test::TestCounter
+module Test::TestUtils
 
 import Prelude;
-import Counter;
+import Utils;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
 import lang::java::jdt::m3::Core;
@@ -68,6 +68,8 @@ test bool TestCountAllLOCCase1() {
 }
 
 test bool TestCountAllLOCCase2() {
+	// To check if countAllLoc plays nicely with filteredLines,
+	// filteredLines should be in-between size 0 and the maximum size.
 	my_classes = {e | <c, e> <- declaredTopTypes(mmm), isClass(e)};
 	list[str] lines = [*readFileLines(e) | e <- my_classes];	
 	int filteredLines = countAllLOC(mmm);

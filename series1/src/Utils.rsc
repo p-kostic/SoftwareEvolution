@@ -1,4 +1,4 @@
-module Counter
+module Utils
 
 import lang::java::m3::Core;
 import lang::java::m3::AST;
