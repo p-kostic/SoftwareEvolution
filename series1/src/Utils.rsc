@@ -18,6 +18,7 @@ public list[str] filterLines(list[str] lines) {
 	list[str] filteredLines = [];
 	bool blockComment = false;
 	
+	bool blockComment = false;
 	for(line <- lines) {
 		line = trim(line);
 		
