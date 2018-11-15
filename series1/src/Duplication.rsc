@@ -14,14 +14,9 @@ int RabinKarp(list[str] lines, int windowsize){
 		return 0;
 	}
 	
-	list[int] lineHashes = [];
-	for(line <- lines){
-		int lineHash = 0;
-		for(int i <- [0..size(line)]){
-			lineHash += toInt(charAt(line, i)) * toInt(pow(251, i));
-		}
-		lineHashes += lineHash;
-	}
+	// Preprocess variables
+	int totalAmountOfWindows = size(lines) - windowsize + 1;
+	list[int] lineHashes = PreprocessLines(lines);
 	
 	// Initialize Rabin Karp
 	int hash = 0;
@@ -31,6 +26,8 @@ int RabinKarp(list[str] lines, int windowsize){
 	for(int i <- [0..windowsize]){
 		hash += lineHashes[i] * toInt(pow(251, (windowsize - 1) - i));
 	}
+
+	// Add the initial hash to the hash corpus
 	corpus += hash;
 	
 	// Rolling Hash
@@ -41,7 +38,20 @@ int RabinKarp(list[str] lines, int windowsize){
 		corpus += hash;
 	}
 	
-	
-	return size(lines) - windowsize + 1 - size(corpus);
+	return (size(lines) - windowsize + 1 - size(corpus)) * 6;
 
+}
+
+list[int] PreprocessLines(list[str] lines){
+	list[int] result = [];
+	
+	for(line <- lines){
+		int lineHash = 0;
+		for(int i <- [0..size(line)]){
+			lineHash += toInt(charAt(line, i)) * toInt(pow(251, i));
+		}		
+		result += lineHash;
+	}
+	
+	return result;
 }

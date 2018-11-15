@@ -12,7 +12,7 @@ loc smallSqlProject = |project://smallsql0.21_src|;
 
 
 void Main(){
-	M3 mmm = createM3FromEclipseProject(project);
+	M3 mmm = createM3FromEclipseProject(smallSqlProject);
 	my_classes = {e | <c, e> <- declaredTopTypes(mmm), isClass(e)};
 	list[str] lines = [*readFileLines(e) | e <- my_classes];
 	filteredLines = [trim(e) | e <- lines, !isEmpty(trim(e))];

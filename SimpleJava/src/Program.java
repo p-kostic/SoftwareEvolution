@@ -18,19 +18,21 @@ public class Program {
 		System.out.println("Hello World");
 	}
 	
-	public static void WriteHelloWorld() {
-		System.out.println("Hello World");
-		System.out.println("Hello World");
-		System.out.println("Hello World");
-		System.out.println("Hello World");
+	public static void lalalal() {
+		
 	}
 	
-	public static void WriteHelloWorld() {
-		System.out.println("Hello World");
-		System.out.println("Hello World");
-		System.out.println("Hello World");
-		System.out.println("Hello World");
-	}
+	//asdf
+	//asdfasdf
+	//fdfsfsfsf
+	//asdfasdfasddssdfs
+	///asdfasdf
+	
+	//fqwer/
+	////qwerqwer
+	///qwerqwerqwe
+	
+	
 	
 	public static void WriteHelloWorld(String test) {
 		System.out.println(test);
