@@ -35,5 +35,12 @@ public class Program {
 	public static void WriteHelloWorld(String test) {
 		System.out.println(test);
 	}
+	
+	public static void Method5Lines1Comment(String test) {
+		// This is a comment
+		System.out.println(test);
+		System.out.println(test);
+		System.out.println(test);
+	}
 
 }
