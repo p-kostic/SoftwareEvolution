@@ -22,7 +22,7 @@ public str GetDuplicateScore(list[str] lines, int windowsize, int totalLOC){
 	}
 }
 
-int RabinKarp(list[str] lines, int windowsize){
+public int RabinKarp(list[str] lines, int windowsize){
 	if(windowsize > size(lines)){
 		return 0;
 	}
@@ -45,21 +45,22 @@ int RabinKarp(list[str] lines, int windowsize){
 	corpus += hash;
 	
 	// Rolling Hash
-	int windowPosition = 0;
+	bool inDuplicateBlock = false;
 	for(int i <- [1..lastWindowPos]){
 		hash -= lineHashes[i-1] * toInt(pow(761, (windowsize - 1)));
 		hash *= 761;
 		hash += lineHashes[i + windowsize - 1];
 		if(hash in corpus){
-			if((i - windowPosition) < windowsize){
-				result += windowsize - (i - windowPosition);
+			windowPosition = i;
+			if(inDuplicateBlock){
+				result += 1;
 			}else{
-				result += windowsize;			
+				result += windowsize;
+				inDuplicateBlock = true;
 			}
 			continue;
 		}
-		
-		windowPosition = i;
+		inDuplicateBlock = false;
 		corpus += hash;
 	}
 	
