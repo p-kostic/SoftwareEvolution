@@ -35,6 +35,8 @@ void Main(){
 	// Complexity per unit
 	str CycCompScore = getCyclomaticFromAST(mmm, asts, totalLOC);
 	println("Complexity per unit: <CycCompScore>");
-	
+}
 
+void PrettyPrint(str volumeRank, str duplicateRank, str CycCompRank, st unitSizeRank){
+	// TODO: Pretty print
 }
