@@ -12,8 +12,8 @@ import lang::java::m3::AST;
 import lang::java::jdt::m3::Core;
 import lang::java::jdt::m3::AST;
 
-loc project = |project://SimpleJava|;
-// loc smallSqlProject = |project://smallsql0.21_src|;
+//loc project = |project://SimpleJava|;
+loc project = |project://smallsql0.21_src|;
 
 void Main(){
 	// Global Variables
@@ -35,6 +35,8 @@ void Main(){
 	// Complexity per unit
 	str CycCompScore = getCyclomaticFromAST(mmm, asts, totalLOC);
 	println("Complexity per unit: <CycCompScore>");
-	
+}
 
+void PrettyPrint(str volumeRank, str duplicateRank, str CycCompRank, st unitSizeRank){
+	// TODO: Pretty print
 }
