@@ -10,7 +10,7 @@ import util::Math;
 // Our own modules
 import Utils;
 
-str getCyclomaticFromAST(M3 mmm, set[Declaration] asts, int totalLOC) {
+public str getCyclomaticFromAST(M3 mmm, set[Declaration] asts, int totalLOC) {
 	
 	map[str, tuple[int cc, int lines]] ranks = ("simple"    : <0,0>,
 										        "moderate"  : <0,0>,
@@ -28,39 +28,61 @@ str getCyclomaticFromAST(M3 mmm, set[Declaration] asts, int totalLOC) {
 			ranks[level].lines += sloc;
 			// println("Method <name> with complexity <cc> and <sloc> lines of code");
 		}
-	};
+		case c:constructor(name, _, _, impl): {
+			int cc = cyclomaticComplexity(impl);
+			int sloc = countL(m);
+			str level = determineCCAndLevelPerUnit(cc);
+			ranks[level].cc    += 1;
+			ranks[level].lines += sloc;
+		}
+		case i:initializer(impl): {
+			int cc = cyclomaticComplexity(impl);
+			int sloc = countL(m);
+			str level = determineCCAndLevelPerUnit(cc);
+			ranks[level].cc    += 1;
+			ranks[level].lines += sloc;
+		}
+	}
 	// iprintln(ranks);
 	return determineRiskRank(totalLOC, ranks);
 }
 
-str determineRiskRank(int totalLOC, map[str, tuple[int cc, int lines]] ranks) {
-	real percentageSimple   = toReal(ranks["simple"].lines)    / toReal(totalLOC) * 100;
-	real percentageModerate = toReal(ranks["moderate"].lines)  / toReal(totalLOC) * 100;
-	real percentageHigh 	= toReal(ranks["high"].lines)      / toReal(totalLOC) * 100;
-	real percentageVeryHigh = toReal(ranks["very high"].lines) / toReal(totalLOC) * 100;
+
+public str determineRiskRank(int totalLOC, map[str, tuple[int cc, int lines]] ranks) {
 	
-	real percentageTotal = percentageSimple + percentageModerate + percentageHigh + percentageVeryHigh;
-	println("Percentage Distribution: simple: <percentageSimple>%, moderate: <percentageModerate>%, high: <percentageHigh>%, very high: <percentageVeryHigh>%");
-	println("Total percentage: <percentageTotal>% methods");
-	
-	if (ranks["very high"].lines > 0) {
-		// Guaranteed to be at least a '-' system
+	if ((ranks["simple"].lines + ranks["moderate"].lines + ranks["high"].lines + ranks["very high"].lines) < totalLOC) {
+
+		real percentageSimple   = toReal(ranks["simple"].lines)    / toReal(totalLOC) * 100;
+		real percentageModerate = toReal(ranks["moderate"].lines)  / toReal(totalLOC) * 100;
+		real percentageHigh 	= toReal(ranks["high"].lines)      / toReal(totalLOC) * 100;
+		real percentageVeryHigh = toReal(ranks["very high"].lines) / toReal(totalLOC) * 100;
 		
-		if (percentageModerate <= 50 && percentageHigh <= 15 && percentageVeryHigh <= 5) {
-			return "-";
+		real percentageTotal = percentageSimple + percentageModerate + percentageHigh + percentageVeryHigh;
+		println("Percentage Distribution: simple: <percentageSimple>%, moderate: <percentageModerate>%, high: <percentageHigh>%, very high: <percentageVeryHigh>%");
+		println("Total percentage: <percentageTotal>% methods");
+		
+		if (ranks["very high"].lines > 0) {
+			// Guaranteed to be at least a '-' system
+			
+			if (percentageModerate <= 50 && percentageHigh <= 15 && percentageVeryHigh <= 5) {
+				return "-";
+			}
+			return "--";
 		}
+		else if (percentageModerate <= 25 && percentageHigh <= 10) {
+			return "++";
+		}
+		else if (percentageModerate <= 30 && percentageHigh <= 5) {
+			return "+";
+		}
+		else if (percentageModerate <= 40 && percentageHigh <= 0) {
+			return "-";
+		}	
 		return "--";
+	} else {
+		return "Error: Something went wrong in determining the risk rank";
 	}
-	else if (percentageModerate <= 25 && percentageHigh <= 10) {
-		return "++";
-	}
-	else if (percentageModerate <= 30 && percentageHigh <= 5) {
-		return "+";
-	}
-	else if (percentageModerate <= 40 && percentageHigh <= 0) {
-		return "-";
-	}	
-	return "--";
+	
 }
 
 str determineCCAndLevelPerUnit(int unitComplexity) {
