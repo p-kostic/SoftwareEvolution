@@ -12,7 +12,6 @@ test bool TestRabinKarpCase0() {
 	
 	int duplicateLines = RabinKarp(lines, 1);
 	int percentage = toInt(toReal(duplicateLines) / 10 * 100);
-
 	return percentage == 90;
 }
 
@@ -21,18 +20,20 @@ test bool TestRabinKarpCase1() {
 	list[str] lines = ["1", "1", "1", "1", "1", "1", "1", "1", "1", "1"];
 	
 	int duplicateLines = RabinKarp(lines, 6);
-	println(duplicateLines);
 	int percentage = toInt(toReal(duplicateLines) / 10 * 100);
 
-	return percentage == 90;
+	return percentage == 40;
 }
 
 test bool TestRabinKarpCase2() {
-	list[str] lines = ["A", "B", "C", "A", "B", "C"];
-	
-	int duplicateLines = RabinKarp(lines, 2);
-	println(duplicateLines);
-	int percentage = toInt(toReal(duplicateLines) / 6 * 100);
+	list[str] lines = ["1", "1", "1", "0", "1", "1", "1"];
+	int duplicateLines = RabinKarp(lines,3);
+	return duplicateLines == 3;
+}
 
-	return percentage == 50;
+test bool TestRabinKarpCase3() {
+	list[str] lines = ["1", "1", "0", "0", "1","1","2","2", "0","2","2"];
+	int duplicateLines = RabinKarp(lines,2);
+	println(duplicateLines);
+	return duplicateLines == 4;
 }

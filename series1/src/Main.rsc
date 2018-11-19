@@ -12,8 +12,8 @@ import lang::java::m3::AST;
 import lang::java::jdt::m3::Core;
 import lang::java::jdt::m3::AST;
 
-loc project = |project://SimpleJava|;
-// loc smallSqlProject = |project://smallsql0.21_src|;
+//loc project = |project://SimpleJava|;
+loc project = |project://smallsql0.21_src|;
 
 void Main(){
 	// Global Variables
