@@ -14,7 +14,8 @@ import lang::java::jdt::m3::Core;
 import lang::java::jdt::m3::AST;
 
 //loc project = |project://SimpleJava|;
-loc project = |project://smallsql0.21_src|;
+// loc project = |project://smallsql0.21_src|;
+loc project = |project://src|;
 
 void Main(){
 	println("#-------------------------# Beginning Analysis... #------------------------#");
@@ -58,17 +59,17 @@ void calculateFinalScore(str volumeRank, str duplicateRank, str cycCompScore, st
 	real cycRankInt       = toReal(rankToInt(cycCompScore)); 
 	real unitSizeRankInt  = toReal(rankToInt(unitSizeRank));
 	
-	real analysability = (1 / 3) * duplicateRankInt + (1 / 3) * volumeRankInt +  (1 / 3) * unitSizeRankInt;
+	real analysability = (1 / 3.0) * duplicateRankInt + (1 / 3.0) * volumeRankInt +  (1/ 3.0) * unitSizeRankInt;
 	real changeability = 0.5 * cycRankInt + 0.5 * duplicateRankInt;
 	real testability   = 0.5 * cycRankInt + 0.5 * unitSizeRankInt;
-	real overall       = (1/ 3) * analysability + (1 / 3) * changeability + (1 / 3) * testability; 
+	real overall       = (1/ 3.0) * analysability + (1 / 3.0) * changeability + (1 / 3.0) * testability; 
 	
 	println("#--------------------# Maintainability Report #----------------------------#");
-	println("# Analysability of <analysability>   --\> \'<intToRank(toInt(analysability))>\'");
-	println("# Changeability of <changeability> --\> \'<intToRank(toInt(changeability))>\'");
-	println("# Testability of   <testability> --\> \'<intToRank(toInt(testability))>\'");
+	println("# Analysability of <analysability>   --\> \'<intToRank(toInt(round(analysability)))>\'");
+	println("# Changeability of <changeability> --\> \'<intToRank(toInt(round(changeability)))>\'");
+	println("# Testability of   <testability> --\> \'<intToRank(toInt(round(testability)))>\'");
 	println("#");
-	println("# Overall:         <overall>  --\> \'<intToRank(toInt(overall))>\'");
+	println("# Overall:         <overall>  --\> \'<intToRank(toInt(round(overall)))>\'");
 	println("#--------------------------------------------------------------------------#");
 }
 
@@ -85,7 +86,7 @@ int rankToInt(str rank) {
 		case "++":
 			return 2;
 		default:
-			return "Error, not --, -, o, +, or ++";  
+			return 1000;  
 	}
 }
 

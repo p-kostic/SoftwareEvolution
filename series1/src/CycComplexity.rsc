@@ -116,7 +116,7 @@ str determineCCAndLevelPerUnit(int unitComplexity) {
    Journal of Software: Evolution and Process, 28(7), 589-618. 
 */ 
 int cyclomaticComplexity(Statement impl){
-	int result = 0;
+	int result = 1;
 	visit(impl) {
 		case \if(_,_): 	          result += 1;
 	    case \if(_,_,x):          result += 1;
