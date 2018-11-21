@@ -14,6 +14,7 @@ import IO;
 	
 	"Simple line of code metric (LOC), which counts all lines of source code that are not comments or blank lines."
 */
+// Given a list of strings, remove all types of comments and whitespace 
 public list[str] filterLines(list[str] lines) {
 	list[str] filteredLines = [];
 
@@ -51,12 +52,14 @@ public list[str] filterLines(list[str] lines) {
 	return filteredLines;
 }
 
+// Gets the filtered LOC for a given mmm (e.g. whole project) 
 public int countAllLOC(M3 mmm) {
 	my_classes = {e | <c, e> <- declaredTopTypes(mmm), isClass(e)};
 	list[str] lines = [*readFileLines(e) | e <- my_classes];	
 	return size(filterLines(lines));
 }
 
+// Gets the filtered LOC for a given Declaration (e.g. Method)
 public int countL(Declaration d) {
     loc source = d.src;
 	list[str] lines = readFileLines(source);

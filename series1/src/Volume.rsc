@@ -1,18 +1,34 @@
 module Volume
 
 import util::Math;
+import IO;
 
 str GetVolumeRank(int totalLOC){
+	println("#---------------------------# Volume Rank #--------------------------------#");
+	println("# For a codebase with <totalLOC> total lines of code");
+	
 	real kloc = toReal(totalLOC) / 1000;
+	println("# This is <kloc> KLOC");
+	 
 	if (kloc < 66){
+		println("# Volume rank of \'++\'");
+		println("#--------------------------------------------------------------------------#");
 		return "++";	
 	}else if(kloc < 246){
+		println("# Volume rank of \'+\'");
+		println("#--------------------------------------------------------------------------#");
 		return "+";
 	}else if(kloc < 665){
+		println("# Volume rank of \'o\'");
+		println("#--------------------------------------------------------------------------#");
 		return "o";
 	}else if(kloc < 1310){
+		println("# Volume rank of \'-\'");
+		println("#--------------------------------------------------------------------------#");
 		return "-";
 	}else{
+		println("# Volume rank of \'--\'");
+		println("#--------------------------------------------------------------------------#");
 		return "--";
 	}
 }

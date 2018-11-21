@@ -8,16 +8,30 @@ import IO;
 public str GetDuplicateScore(list[str] lines, int windowsize, int totalLOC){
 	int duplicateLOC = RabinKarp(lines, windowsize);
 	int duplicatePercentage = toInt(toReal(duplicateLOC) / toReal(totalLOC) * 100);
-	println("Duplicate percentage: <duplicatePercentage>");
+	println("#---------------------------# Duplication #--------------------------------#");
+	println("# For a codebase with <totalLOC>");
+	println("# <size(lines)> is considered for duplication analysis");
+	println("# With a window size of         <windowsize>");
+	println("# Overall Duplicate percentage: <duplicatePercentage>%");
 	if(duplicatePercentage < 3) {
+		println("# Duplication rank of \'++\'");
+		println("#--------------------------------------------------------------------------#");
 		return "++";
 	} else if (duplicatePercentage < 5) {
+		println("# Duplication rank of \'+\'");
+		println("#--------------------------------------------------------------------------#");
 		return "+";
 	} else if (duplicatePercentage < 10) {
+		println("# Duplication rank of \'o\'");
+		println("#--------------------------------------------------------------------------#");
 		return "o";
 	} else if (duplicatePercentage < 20) {
+		println("# Duplication rank of \'-\'");
+		println("#--------------------------------------------------------------------------#");
 		return "-";
 	} else if (duplicatePercentage < 100) {
+		println("# Duplication rank of \'--\'");
+		println("#--------------------------------------------------------------------------#");
 		return "--";
 	}
 	

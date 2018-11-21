@@ -30,37 +30,44 @@ public str getCyclomaticFromAST(M3 mmm, set[Declaration] asts, int totalLOC) {
 		}
 		case c:constructor(name, _, _, impl): {
 			int cc = cyclomaticComplexity(impl);
-			int sloc = countL(m);
+			int sloc = countL(c);
 			str level = determineCCAndLevelPerUnit(cc);
 			ranks[level].cc    += 1;
 			ranks[level].lines += sloc;
 		}
 		case i:initializer(impl): {
 			int cc = cyclomaticComplexity(impl);
-			int sloc = countL(m);
+			int sloc = countL(i);
 			str level = determineCCAndLevelPerUnit(cc);
 			ranks[level].cc    += 1;
 			ranks[level].lines += sloc;
 		}
 	}
-	// iprintln(ranks);
-	return determineRiskRank(totalLOC, ranks);
+	str finalResult = determineRiskRank(totalLOC, ranks);
+	println("# Final System Rank for Complexity per unit: \'<finalResult>\'");
+	println("#--------------------------------------------------------------------------#");
+	return finalResult;
 }
 
-
 public str determineRiskRank(int totalLOC, map[str, tuple[int cc, int lines]] ranks) {
-	
-	if ((ranks["simple"].lines + ranks["moderate"].lines + ranks["high"].lines + ranks["very high"].lines) < totalLOC) {
-
+	int sum = ranks["simple"].lines + ranks["moderate"].lines + ranks["high"].lines + ranks["very high"].lines;
+	if (sum < totalLOC) {
 		real percentageSimple   = toReal(ranks["simple"].lines)    / toReal(totalLOC) * 100;
 		real percentageModerate = toReal(ranks["moderate"].lines)  / toReal(totalLOC) * 100;
 		real percentageHigh 	= toReal(ranks["high"].lines)      / toReal(totalLOC) * 100;
 		real percentageVeryHigh = toReal(ranks["very high"].lines) / toReal(totalLOC) * 100;
 		
 		real percentageTotal = percentageSimple + percentageModerate + percentageHigh + percentageVeryHigh;
-		println("Percentage Distribution: simple: <percentageSimple>%, moderate: <percentageModerate>%, high: <percentageHigh>%, very high: <percentageVeryHigh>%");
-		println("Total percentage: <percentageTotal>% methods");
-		
+
+		println("#----------------------# Cyclomatic Complexity #---------------------------#");
+		println("# For a codebase with <totalLOC> total lines of code, <sum> belongs to units");
+		println("# Rank Distribution:");
+		println("# - Simple:    <percentageSimple>%");
+		println("# - Moderate:  <percentageModerate>%");
+		println("# - High:      <percentageHigh>%");
+		println("# - Very High: <percentageVeryHigh>%");
+		println("# Total percentage: <percentageTotal>% of the codebase consists of units");
+
 		if (ranks["very high"].lines > 0) {
 			// Guaranteed to be at least a '-' system
 			
@@ -68,17 +75,19 @@ public str determineRiskRank(int totalLOC, map[str, tuple[int cc, int lines]] ra
 				return "-";
 			}
 			return "--";
-		}
-		else if (percentageModerate <= 25 && percentageHigh <= 10) {
+		} else if (percentageModerate <= 25 && percentageHigh <= 10) {
 			return "++";
 		}
 		else if (percentageModerate <= 30 && percentageHigh <= 5) {
 			return "+";
 		}
-		else if (percentageModerate <= 40 && percentageHigh <= 0) {
+		else if (percentageModerate <= 40 && percentageHigh <= 10) {
+			return "o";
+		}
+		else if (percentageModerate <= 50 && percentageHigh <= 15) {
 			return "-";
 		}	
-		return "--";
+		return "Error: Something went wrong in determining the risk rank";
 	} else {
 		return "Error: Something went wrong in determining the risk rank";
 	}
