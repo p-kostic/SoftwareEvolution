@@ -13,6 +13,7 @@ import Metrics::Volume;
 import Metrics::CycComplexity;
 import Metrics::UnitSize;
 import Metrics::Duplication;
+import Metrics::Parameters;
 
 // Other own modules
 import Services::Utils;
@@ -38,19 +39,25 @@ void Main(){
 	
 	// Calculate duplicate metrics
 	Rank duplicateScore = GetDuplicateRank(lines, 6, totalLOC);
-		
+	
+	// Data for Cyclomatic Complexity and Unit Size
 	map[str, int] ranksCC       = ("simple": 0, "moderate"  : 0, "high" : 0,"very high" : 0);				        
 	map[str, int] ranksUnitSize = ("simple": 0, "moderate"  : 0, "high" : 0,"very high" : 0);
-																	        
+	
+	// Data for the paremeter metric				        
+	int methodCount = 0;
+	int totalParameterCount = 0;
 	
 	visit(asts) {
-		case m:method(_,name,_,_,impl): {
+		case m:method(_,name,params,_,impl): {
 			int cc 			       = cyclomaticComplexity(impl);
 			int sloc 		       = countL(m);
 			str levelCC 	       = determineCCAndLevelPerUnit(cc);
 			str levelUnitSize      = determineRankForLines(sloc);
 			ranksCC[levelCC]       += sloc;
 			ranksUnitSize[levelUnitSize] += sloc;
+			methodCount += 1;
+			totalParameterCount += size(params);
 		}
 		case c:constructor(name, _, _, impl): {
 			int cc                 = cyclomaticComplexity(impl);
@@ -71,18 +78,22 @@ void Main(){
 	}
 
 	// Complexity per unit
-	Rank CycCompScore = getCyclomaticFromAST(totalLOC, ranksCC);
+	Rank CycCompRank = getCyclomaticFromAST(totalLOC, ranksCC);
 	
 	// Unit Size
-	Rank unitSizeScore = getUnitSizeFromAST(totalLOC, ranksUnitSize);
+	Rank unitSizeRank = getUnitSizeFromAST(totalLOC, ranksUnitSize);
+	
+	// Parameters
+	real averageParametersPerUnit = totalParameterCount / toReal(methodCount);
+	Rank parameterRank = getParameterRank(averageParametersPerUnit);
 	
 	println("#-------------------------# Final Results #--------------------------------#");
 	println("# Volume:              \'<RankToString(volumeRank)>\'");
 	println("# Duplication:         \'<RankToString(duplicateScore)>\'");
-	println("# Complexity per unit: \'<RankToString(CycCompScore)>\'");
-	println("# Unit Size:           \'<RankToString(unitSizeScore)>\'");
+	println("# Complexity per unit: \'<RankToString(CycCompRank)>\'");
+	println("# Unit Size:           \'<RankToString(unitSizeRank)>\'");
 	println("#--------------------------------------------------------------------------#");
-	calculateFinalScore(volumeRank, duplicateScore, CycCompScore, unitSizeScore);
+	calculateFinalScore(volumeRank, duplicateScore, CycCompRank, unitSizeRank);
 }
 
 // Note: Equal weights
@@ -90,10 +101,10 @@ void Main(){
 // Changeability: Complexity, Duplication					   = total of 2 
 // Stability:     Unit Testing								   = total of 1 (0 no bonus)
 // Testability:   Complexity, Unit Size, Unit Testing		   = total of 2 (2 no bonus)
-void calculateFinalScore(Rank volumeRank, Rank duplicateRank, Rank cycCompScore, Rank unitSizeRank) {
+void calculateFinalScore(Rank volumeRank, Rank duplicateRank, Rank CycCompRank, Rank unitSizeRank) {
 	real volumeRankInt    = toReal(volumeRank);
 	real duplicateRankInt = toReal(duplicateRank);
-	real cycRankInt       = toReal(cycCompScore); 
+	real cycRankInt       = toReal(CycCompRank); 
 	real unitSizeRankInt  = toReal(unitSizeRank);
 	
 	real analysability = (1 / 3.0) * duplicateRankInt + (1 / 3.0) * volumeRankInt +  (1/ 3.0) * unitSizeRankInt;
