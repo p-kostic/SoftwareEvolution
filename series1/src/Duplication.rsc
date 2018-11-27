@@ -4,38 +4,27 @@ import List;
 import Set;
 import util::Math;
 import IO;
+import Utils;
+import PrettyPrint;
 
-public str GetDuplicateScore(list[str] lines, int windowsize, int totalLOC){
+public Rank GetDuplicateRank(list[str] lines, int windowsize, int totalLOC){
 	int duplicateLOC = RabinKarp(lines, windowsize);
 	int duplicatePercentage = round(toReal(duplicateLOC) / toReal(totalLOC) * 100);
-	println("#---------------------------# Duplication #--------------------------------#");
-	println("# For a codebase with <totalLOC>");
-	println("# <size(lines)> is considered for duplication analysis");
-	println("# With a window size of         <windowsize>");
-	println("# Overall Duplicate percentage: <duplicatePercentage>%");
+	Rank result = 0;
 	if(duplicatePercentage < 3) {
-		println("# Duplication rank of \'++\'");
-		println("#--------------------------------------------------------------------------#");
-		return "++";
+		result = 2;
 	} else if (duplicatePercentage < 5) {
-		println("# Duplication rank of \'+\'");
-		println("#--------------------------------------------------------------------------#");
-		return "+";
+		result = 1;
 	} else if (duplicatePercentage < 10) {
-		println("# Duplication rank of \'o\'");
-		println("#--------------------------------------------------------------------------#");
-		return "o";
+		result = 0;
 	} else if (duplicatePercentage < 20) {
-		println("# Duplication rank of \'-\'");
-		println("#--------------------------------------------------------------------------#");
-		return "-";
+		result = -1;
 	} else if (duplicatePercentage < 100) {
-		println("# Duplication rank of \'--\'");
-		println("#--------------------------------------------------------------------------#");
-		return "--";
+		result = -2;
 	}
 	
-	return "--";
+	prettyPrintDuplication(windowsize, totalLOC, duplicatePercentage, result);
+	return result;
 }
 
 public int RabinKarp(list[str] lines, int windowsize){
@@ -50,7 +39,7 @@ public int RabinKarp(list[str] lines, int windowsize){
 	
 	// Initialize Rabin Karp
 	int hash = 0;
-	map[int, int] corpus = ();
+	set[int] corpus = {};
 	int lastWindowPos = size(lines) - windowsize + 1;
 	
 	for(int i <- [0..windowsize]){
@@ -58,7 +47,7 @@ public int RabinKarp(list[str] lines, int windowsize){
 	}
 
 	// Add the initial hash to the hash corpus
-	corpus += (hash: 0);
+	corpus += hash;
 	
 	// Rolling Hash
 	int windowPosition = 0;
@@ -70,22 +59,17 @@ public int RabinKarp(list[str] lines, int windowsize){
 		hash += lineHashes[i + windowsize - 1];
 		
 		if(hash in corpus){
-			if(corpus[hash] == 0){
-				corpus -= (hash: 0);
-				corpus += (hash: 1);
-				result += max(min(i - windowPosition, windowsize), windowsize);
-			}
-			
 			// Check for window overlap with the previous hit, minimize for the windowsize
 			result += min(i - windowPosition, windowsize);
 			windowPosition = i; // keep track of where the last hit was.
 			continue;
 		}
 		
-		corpus += (hash: 0);
+		corpus += hash;
 	}
 	
 	return result;
+
 }
 
 // Converts a list of lines to a list of their hashes.
