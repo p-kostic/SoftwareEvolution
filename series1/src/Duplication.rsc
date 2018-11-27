@@ -7,7 +7,7 @@ import IO;
 
 public str GetDuplicateScore(list[str] lines, int windowsize, int totalLOC){
 	int duplicateLOC = RabinKarp(lines, windowsize);
-	int duplicatePercentage = toInt(toReal(duplicateLOC) / toReal(totalLOC) * 100);
+	int duplicatePercentage = round(toReal(duplicateLOC) / toReal(totalLOC) * 100);
 	println("#---------------------------# Duplication #--------------------------------#");
 	println("# For a codebase with <totalLOC>");
 	println("# <size(lines)> is considered for duplication analysis");
@@ -64,37 +64,28 @@ public int RabinKarp(list[str] lines, int windowsize){
 	int windowPosition = 0;
 	bool inDuplicateBlock = false;
 	for(int i <- [1..lastWindowPos]){
+		// Roll the hash in constant time
 		hash -= lineHashes[i-1] * toInt(pow(761, (windowsize - 1)));
 		hash *= 761;
 		hash += lineHashes[i + windowsize - 1];
 		
 		if(hash in corpus){
-			//println("Hit");
 			if(corpus[hash] == 0){
 				corpus -= (hash: 0);
 				corpus += (hash: 1);
-				result += min(i - windowPosition, windowsize);
+				result += max(min(i - windowPosition, windowsize), windowsize);
 			}
 			
+			// Check for window overlap with the previous hit, minimize for the windowsize
 			result += min(i - windowPosition, windowsize);
-			windowPosition = i;
-			//if(inDuplicateBlock){
-			//	result += 1;
-			//}else{
-			//	result += windowsize;
-			//	inDuplicateBlock = true;
-			//}
+			windowPosition = i; // keep track of where the last hit was.
 			continue;
 		}
-		//inDuplicateBlock = false;
 		
 		corpus += (hash: 0);
 	}
 	
-	//println(corpus);
-	//result += size(originalHits) * windowsize;
 	return result;
-
 }
 
 // Converts a list of lines to a list of their hashes.

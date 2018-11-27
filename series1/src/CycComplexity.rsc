@@ -12,10 +12,9 @@ import Utils;
 import PrettyPrint;
 
 public str getCyclomaticFromAST(int totalLOC, map[str, tuple[int cc, int lines]] ranks) {
-	println("#----------------------# Cyclomatic Complexity #---------------------------#");
+	
 	str finalResult = determineRiskRank(totalLOC, ranks);
-	println("# Final System Rank for Complexity per unit: \'<finalResult>\'");
-	println("#--------------------------------------------------------------------------#");
+	
 	return finalResult;
 }
 
@@ -31,7 +30,7 @@ public str determineRiskRank(int totalLOC, map[str, tuple[int cc, int lines]] ra
 		real percentageVeryHigh = calculatePercentage(ranks["very high"].lines, totalLOC);
 		
 		// Pretty print descriptive statistics during calculation
-		prettyPrintDistribution(percentageSimple, percentageModerate, percentageHigh, percentageVeryHigh, totalLOC, sum);
+		prettyPrintCycComplexity(percentageSimple, percentageModerate, percentageHigh, percentageVeryHigh, totalLOC, sum);
 		
 		return finalRiskFromDist(percentageModerate, percentageHigh, percentageVeryHigh, ranks["very high"].lines);
 	} else {

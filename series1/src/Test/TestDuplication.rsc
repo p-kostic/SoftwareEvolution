@@ -11,19 +11,28 @@ test bool TestRabinKarpCase0() {
 	list[str] lines = ["1", "1", "1", "1", "1", "1", "1", "1", "1", "1"];
 	
 	int duplicateLines = RabinKarp(lines, 1);
-	int percentage = toInt(toReal(duplicateLines) / 10 * 100);
-	return percentage == 100;
+	return duplicateLines == 9;
 }
 
+// 6 originals, 4 duplicates (partial window)
 test bool TestRabinKarpCase1() {
 	// 10 elements
 	list[str] lines = ["1", "1", "1", "1", "1", "1", "1", "1", "1", "1"];
 	
 	int duplicateLines = RabinKarp(lines, 6);
-	int percentage = toInt(toReal(duplicateLines) / 10 * 100);
 	println(duplicateLines);
-	return percentage == 100;
+	return duplicateLines == 4;
 }
+
+// Entire window fits
+test bool TestRabinKarpCase4() {
+	// 12 elements
+	list[str] lines = ["1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1"];
+	
+	int duplicateLines = RabinKarp(lines, 6);
+	return duplicateLines == 6;
+}
+
 
 test bool TestRabinKarpCase2() {
 	list[str] lines = ["1", "1", "1", "0", "1", "1", "1"];

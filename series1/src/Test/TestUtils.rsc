@@ -105,14 +105,6 @@ test bool TestFilterLinesCase8(){
 	return size(filterLines(edgeCase)) == 2;
 }
 
-test bool TestFilterLinesCase9(){
-	list[str] edgeCase = [
-		"SomeCode(); /* Comment */", 	// 1
-		"SomeCode();"					// 2
-	];
-	return size(filterLines(edgeCase)) == 2;
-}
-
 test bool TestCountAllLOCCase1() {
 	// If counted by hand, we get 31 for the SimpleJava project. Check if the implementation is correct
 	return size(getLinesOfCode(simpleJava)) == 31;
