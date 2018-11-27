@@ -50,7 +50,7 @@ public int RabinKarp(list[str] lines, int windowsize){
 	
 	// Initialize Rabin Karp
 	int hash = 0;
-	set[int] corpus = {};
+	map[int, int] corpus = ();
 	int lastWindowPos = size(lines) - windowsize + 1;
 	
 	for(int i <- [0..windowsize]){
@@ -58,7 +58,7 @@ public int RabinKarp(list[str] lines, int windowsize){
 	}
 
 	// Add the initial hash to the hash corpus
-	corpus += hash;
+	corpus += (hash: 0);
 	
 	// Rolling Hash
 	int windowPosition = 0;
@@ -69,6 +69,13 @@ public int RabinKarp(list[str] lines, int windowsize){
 		hash += lineHashes[i + windowsize - 1];
 		
 		if(hash in corpus){
+			//println("Hit");
+			if(corpus[hash] == 0){
+				corpus -= (hash: 0);
+				corpus += (hash: 1);
+				result += min(i - windowPosition, windowsize);
+			}
+			
 			result += min(i - windowPosition, windowsize);
 			windowPosition = i;
 			//if(inDuplicateBlock){
@@ -81,9 +88,11 @@ public int RabinKarp(list[str] lines, int windowsize){
 		}
 		//inDuplicateBlock = false;
 		
-		corpus += hash;
+		corpus += (hash: 0);
 	}
 	
+	//println(corpus);
+	//result += size(originalHits) * windowsize;
 	return result;
 
 }

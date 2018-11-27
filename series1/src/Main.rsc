@@ -15,25 +15,28 @@ import lang::java::jdt::m3::AST;
 
 //loc project = |project://SimpleJava|;
 loc project = |project://smallsql0.21_src|;
+//loc project = |project://hsqldb-2.3.1|;
 
 void Main(){
 	println("#-------------------------# Beginning Analysis... #------------------------#");
 	println("#--------------------------------------------------------------------------#");
 	// Global Variables
-	M3 mmm = createM3FromEclipseProject(project);
-	my_classes = {e | <c, e> <- declaredTopTypes(mmm), isClass(e)};
-	int totalLOC = countAllLOC(mmm);
+	
+	list[str] lines = getLinesOfCode(project);
+	int totalLOC = size(lines);
 	set[Declaration] asts = createAstsFromEclipseProject(project, true);
 	
+	println(totalLOC);
 	// Volume
 	str volumeRank = GetVolumeRank(totalLOC);
 	
 	// Calculate duplicate metrics
-	list[str] lines = filterLines([*readFileLines(e) | e <- my_classes]);
 	str duplicateScore = GetDuplicateScore(lines, 6, totalLOC);
+	println(duplicateScore);
+	return;
 	
 	// Complexity per unit
-	str CycCompScore = getCyclomaticFromAST(mmm, asts, totalLOC);
+	//str CycCompScore = getCyclomaticFromAST(mmm, asts, totalLOC);
 	
 	// Unit Size
 	str unitSizeScore = getUnitSizeFromAST(asts, totalLOC);

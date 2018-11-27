@@ -6,6 +6,7 @@ import lang::java::jdt::m3::Core;
 import lang::java::jdt::m3::AST;
 import Prelude;
 import IO;
+import util::FileSystem;
 
 // As reported by:
 /* 
@@ -53,10 +54,10 @@ public list[str] filterLines(list[str] lines) {
 }
 
 // Gets the filtered LOC for a given mmm (e.g. whole project) 
-public int countAllLOC(M3 mmm) {
-	my_classes = {e | <c, e> <- declaredTopTypes(mmm), isClass(e)};
-	list[str] lines = [*readFileLines(e) | e <- my_classes];	
-	return size(filterLines(lines));
+public list[str] getLinesOfCode(loc projectLocation) {
+	set[loc] files = {f | f <- visibleFiles(projectLocation), /\.java/ := f.file};
+	list[str] lines = [*readFileLines(f) | f <- files];
+	return filterLines(lines);   
 }
 
 // Gets the filtered LOC for a given Declaration (e.g. Method)
