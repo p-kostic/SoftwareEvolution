@@ -1,11 +1,13 @@
 module Test::TestUtils
 
 import Prelude;
-import Utils;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
 import lang::java::jdt::m3::Core;
 import lang::java::jdt::m3::AST;
+
+// Own modules
+import Services::Utils;
 
 // Simple Java Testing project for the unit tests that need either ASTs or M3s
 loc simpleJava = |project://SimpleJava|;

@@ -1,11 +1,14 @@
-module Duplication
+module Metrics::Duplication
 import String;
 import List;
 import Set;
 import util::Math;
 import IO;
-import Utils;
-import PrettyPrint;
+
+// Own Modules
+import Services::Utils;
+import Services::PrettyPrint;
+import Services::Ranking;
 
 public Rank GetDuplicateRank(list[str] lines, int windowsize, int totalLOC){
 	int duplicateLOC = RabinKarp(lines, windowsize);

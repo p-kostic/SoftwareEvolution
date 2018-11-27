@@ -1,18 +1,23 @@
 module Main
 import IO;
 import Prelude;
-import Duplication;
 import String;
-import Utils;
-import Volume;
-import CycComplexity;
-import UnitSize;
 import util::Math;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
 import lang::java::jdt::m3::Core;
 import lang::java::jdt::m3::AST;
 
+// Metric modules
+import Metrics::Volume;
+import Metrics::CycComplexity;
+import Metrics::UnitSize;
+import Metrics::Duplication;
+
+// Other own modules
+import Services::Utils;
+import Services::PrettyPrint;
+import Services::Ranking;
 
 //loc project = |project://SimpleJava|;
 loc project = |project://smallsql0.21_src|;

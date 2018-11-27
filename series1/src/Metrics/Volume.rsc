@@ -1,8 +1,11 @@
-module Volume
+module Metrics::Volume
 
-import Utils;
 import util::Math;
 import IO;
+
+// Own modules
+import Services::Utils;
+import Services::Ranking;
 
 Rank GetVolumeRank(int totalLOC){
 	println("#---------------------------# Volume Rank #--------------------------------#");

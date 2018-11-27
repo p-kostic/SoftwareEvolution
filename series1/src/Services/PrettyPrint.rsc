@@ -1,8 +1,9 @@
-module PrettyPrint
+module Services::PrettyPrint
 
 import util::Math;
 import Prelude;
-import Utils;
+import Services::Utils;
+import Services::Ranking;
 
 void prettyPrintCycComplexity(real simple, real moderate, real high, real veryHigh, int totalLOC, int sum, Rank finalResult) {
 		real percentageTotal = simple + moderate + high + veryHigh;
@@ -15,7 +16,7 @@ void prettyPrintCycComplexity(real simple, real moderate, real high, real veryHi
 		println("# - High:      <high>%");
 		println("# - Very High: <veryHigh>%");
 		println("# Total percentage: <percentageTotal>% of the codebase consists of units");
-		println("# Final System Rank for Complexity per unit: \'<finalResult>\'");
+		println("# Final System Rank for Complexity per unit: \'<RankToString(finalResult)>\'");
 		println("#--------------------------------------------------------------------------#");
 }
 
@@ -39,6 +40,6 @@ void prettyPrintUnitSize(real simples, real moderate, real high, real veryHigh, 
 		println("# - High:      <high>%");
 		println("# - Very High: <veryHigh>%");
 		println("# Total percentage: <percentageTotal>% of the codebase consists of units");
-		println("# Final System Rank for Unit Size: \'<finalResult>\'");
+		println("# Final System Rank for Unit Size: \'<RankToString(finalResult)>\'");
 		println("#--------------------------------------------------------------------------#");
 }
