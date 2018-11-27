@@ -80,7 +80,5 @@ void Main(){
 	Rank parameterRank = getParameterRank(averageParametersPerUnit);	// Parameters
 	
 	prettyPrintFinalResults(volumeRank, duplicateScore, CycCompScore, unitSizeScore);
-	
-	list[real] maintainabilityRankings = calculateFinalRank(volumeRank, duplicateScore, CycCompScore, unitSizeScore);
 	prettyPrintMaintainability(maintainabilityRankings);
 }
