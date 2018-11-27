@@ -9,6 +9,28 @@ import Prelude;
 import IO;
 import util::FileSystem;
 
+
+public alias Rating = int;
+public Rating PLUS_PLUS = 2;
+public Rating PLUS = 1;
+public Rating ZERO = 0;
+public Rating MIN = -1;
+public Rating MIN_MIN = -2;
+
+// Convert the numeric rating to their string representation
+public str RatingToString(Rating r){
+	str result = "o";
+	switch(r){
+		case -2: result = "--";
+		case -1: result = "-";
+		case 0: result = "o";
+		case 1: result = "+";
+		case 2: result = "++";
+	}
+	
+	return result;
+}
+
 // As reported by:
 /* 
 	Heitlager, I., Kuipers, T., & Visser, J. (2007, September). 
