@@ -1,4 +1,5 @@
 module CycComplexity
+
 import Prelude;
 import IO;
 import lang::java::m3::Core;
@@ -11,28 +12,27 @@ import util::Math;
 import Utils;
 import PrettyPrint;
 
-public str getCyclomaticFromAST(int totalLOC, map[str, tuple[int cc, int lines]] ranks) {
-	
-	str finalResult = determineRiskRank(totalLOC, ranks);
-	
-	return finalResult;
+public str getCyclomaticFromAST(int totalLOC, map[str, int] ranks) {
+	return determineRiskRank(totalLOC, ranks);
 }
 
-public str determineRiskRank(int totalLOC, map[str, tuple[int cc, int lines]] ranks) {
+public str determineRiskRank(int totalLOC, map[str, int] ranks) {
 
-	int sum = ranks["simple"].lines + ranks["moderate"].lines + ranks["high"].lines + ranks["very high"].lines;
+	int sum = ranks["simple"] + ranks["moderate"] + ranks["high"] + ranks["very high"];
 	
 	// Given that we do not count class declerations for unit complexity, sum must be smaller than totalLOC. 
 	if (sum < totalLOC) {
-		real percentageSimple   = calculatePercentage(ranks["simple"].lines,    totalLOC);
-		real percentageModerate = calculatePercentage(ranks["moderate"].lines,  totalLOC);
-		real percentageHigh 	= calculatePercentage(ranks["high"].lines,      totalLOC);
-		real percentageVeryHigh = calculatePercentage(ranks["very high"].lines, totalLOC);
+		real percentageSimple   = calculatePercentage(ranks["simple"],    totalLOC);
+		real percentageModerate = calculatePercentage(ranks["moderate"],  totalLOC);
+		real percentageHigh 	= calculatePercentage(ranks["high"],      totalLOC);
+		real percentageVeryHigh = calculatePercentage(ranks["very high"], totalLOC);
+		
+		str finalRanking = finalRiskFromDist(percentageModerate, percentageHigh, percentageVeryHigh, ranks["very high"]);
 		
 		// Pretty print descriptive statistics during calculation
-		prettyPrintCycComplexity(percentageSimple, percentageModerate, percentageHigh, percentageVeryHigh, totalLOC, sum);
+		prettyPrintCycComplexity(percentageSimple, percentageModerate, percentageHigh, percentageVeryHigh, totalLOC, sum, finalRanking);
 		
-		return finalRiskFromDist(percentageModerate, percentageHigh, percentageVeryHigh, ranks["very high"].lines);
+		return finalRanking;
 	} else {
 		return "Error: Something went wrong in determining the risk rank";
 	}
@@ -60,8 +60,6 @@ public str finalRiskFromDist(real moderate, real high, real veryHigh, int veryHi
 		}	
 		return "Error: Something went wrong in determining the risk rank";
 }
-
-
 
 str determineCCAndLevelPerUnit(int unitComplexity) {
 	if (unitComplexity > 50) {

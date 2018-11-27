@@ -33,48 +33,43 @@ void Main(){
 	
 	// Calculate duplicate metrics
 	str duplicateScore = GetDuplicateScore(lines, 6, totalLOC);
-	println(duplicateScore);
-	return;
-	
-	
 		
-	map[str, tuple[int cc, int lines]] ranks = ("simple"    : <0,0>,
-										        "moderate"  : <0,0>,
-										        "high"      : <0,0>,
-										        "very high" : <0,0>);
+	map[str, int] ranksCC       = ("simple": 0, "moderate"  : 0, "high" : 0,"very high" : 0);				        
+	map[str, int] ranksUnitSize = ("simple": 0, "moderate"  : 0, "high" : 0,"very high" : 0);
+																	        
 	
 	visit(asts) {
 		case m:method(_,name,_,_,impl): {
-			int cc = cyclomaticComplexity(impl);
-			int sloc = countL(m);
-			str level = determineCCAndLevelPerUnit(cc);
-			ranks[level].cc    += 1;
-			ranks[level].lines += sloc;
-			// println("Method <name> with complexity <cc> and <sloc> lines of code");
+			int cc 			       = cyclomaticComplexity(impl);
+			int sloc 		       = countL(m);
+			str levelCC 	       = determineCCAndLevelPerUnit(cc);
+			str levelUnitSize      = determineRankForLines(sloc);
+			ranksCC[levelCC]       += sloc;
+			ranksUnitSize[levelUnitSize] += sloc;
 		}
 		case c:constructor(name, _, _, impl): {
-			int cc = cyclomaticComplexity(impl);
-			int sloc = countL(c);
-			str level = determineCCAndLevelPerUnit(cc);
-			ranks[level].cc    += 1;
-			ranks[level].lines += sloc;
+			int cc                 = cyclomaticComplexity(impl);
+			int sloc               = countL(c);
+			str levelCC            = determineCCAndLevelPerUnit(cc);
+			str levelUnitSize      = determineRankForLines(sloc);
+			ranksCC[levelCC]       += sloc;
+			ranksUnitSize[levelUnitSize] += sloc;
 		}
 		case i:initializer(impl): {
-			int cc = cyclomaticComplexity(impl);
-			int sloc = countL(i);
-			str level = determineCCAndLevelPerUnit(cc);
-			ranks[level].cc    += 1;
-			ranks[level].lines += sloc;
+			int cc                 = cyclomaticComplexity(impl);
+			int sloc               = countL(i);
+			str levelCC            = determineCCAndLevelPerUnit(cc);
+			str levelUnitSize      = determineRankForLines(sloc);
+			ranksCC[levelCC]       += sloc;
+			ranksUnitSize[levelUnitSize] += sloc;
 		}
 	}
 
-	
 	// Complexity per unit
-
-	str CycCompScore = getCyclomaticFromAST(totalLOC, ranks);
+	str CycCompScore = getCyclomaticFromAST(totalLOC, ranksCC);
 	
 	// Unit Size
-	str unitSizeScore = getUnitSizeFromAST(asts, totalLOC);
+	str unitSizeScore = getUnitSizeFromAST(totalLOC, ranksUnitSize);
 	
 	println("#-------------------------# Final Results #--------------------------------#");
 	println("# Volume:              \'<volumeRank>\'");
