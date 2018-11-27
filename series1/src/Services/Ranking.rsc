@@ -1,5 +1,7 @@
 module Services::Ranking
 
+import Prelude;
+import util::Math;
 
 public alias Rank = int;
 public Rank PLUS_PLUS = 2;
@@ -22,6 +24,7 @@ public str RankToString(Rank r){
 	return result;
 }
 
+// Unit Size and CycComplexity have the same values to calculate the distribution levels.
 public Rank finalRiskFromDist(real moderate, real high, real veryHigh, int veryHighLines) {
 		Rank result = -100; // -100 if there is an error
 		if (veryHighLines > 0) {
@@ -44,4 +47,23 @@ public Rank finalRiskFromDist(real moderate, real high, real veryHigh, int veryH
 			result = -1;
 		}	
 		return result;
+}
+
+// Note: Equal weights
+// Analysability: Volume, Duplication, Unit Size, Unit Testing = total of 4 (3 no bonus)
+// Changeability: Complexity, Duplication					   = total of 2 
+// Stability:     Unit Testing								   = total of 1 (0 no bonus)
+// Testability:   Complexity, Unit Size, Unit Testing		   = total of 2 (2 no bonus)
+public list[real] calculateFinalRank(Rank volumeRank, Rank duplicateRank, Rank cycCompScore, Rank unitSizeRank) {
+	real volumeRankInt    = toReal(volumeRank);
+	real duplicateRankInt = toReal(duplicateRank);
+	real cycRankInt       = toReal(cycCompScore); 
+	real unitSizeRankInt  = toReal(unitSizeRank);
+	
+	real analysability = (duplicateRankInt + volumeRankInt + unitSizeRankInt) / 3.0;
+	real changeability = (cycRankInt + duplicateRankInt)                      / 2.0;
+	real testability   = (cycRankInt + unitSizeRankInt) 			          / 2.0;
+	real overall       = (analysability + changeability + testability)        / 3.0;  
+	
+	return [analysability, changeability, testability, overall];
 }
