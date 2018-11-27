@@ -2,6 +2,7 @@ module PrettyPrint
 
 import util::Math;
 import Prelude;
+import Utils;
 
 void prettyPrintCycComplexity(real simple, real moderate, real high, real veryHigh, int totalLOC, int sum, finalResult) {
 		real percentageTotal = simple + moderate + high + veryHigh;
@@ -18,6 +19,11 @@ void prettyPrintCycComplexity(real simple, real moderate, real high, real veryHi
 		println("#--------------------------------------------------------------------------#");
 }
 
-void prettyPrintDuplication(real windowsize, real LOC, real percentage){
-
+void prettyPrintDuplication(int windowsize, int totalLOC, int duplicatePercentage, Rank rank){
+	println("#---------------------------# Duplication #--------------------------------#");
+	println("# For a codebase with <totalLOC> lines");
+	println("# With a window size of         <windowsize>");
+	println("# Overall Duplicate percentage: <duplicatePercentage>%");
+	println("# Duplication rank of \'<RankToString(rank)>\'");
+	println("#--------------------------------------------------------------------------#");
 }

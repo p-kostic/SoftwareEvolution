@@ -13,6 +13,7 @@ import lang::java::m3::AST;
 import lang::java::jdt::m3::Core;
 import lang::java::jdt::m3::AST;
 
+
 //loc project = |project://SimpleJava|;
 loc project = |project://smallsql0.21_src|;
 //loc project = |project://hsqldb-2.3.1|;
@@ -32,8 +33,7 @@ void Main(){
 	str volumeRank = GetVolumeRank(totalLOC);
 	
 	// Calculate duplicate metrics
-	str duplicateScore = GetDuplicateScore(lines, 6, totalLOC);
-	println(duplicateScore);
+	Rank duplicateScore = GetDuplicateRank(lines, 6, totalLOC);
 	return;
 	
 	
@@ -109,38 +109,3 @@ void calculateFinalScore(str volumeRank, str duplicateRank, str cycCompScore, st
 	println("# Overall:         <overall>  --\> \'<intToRank(toInt(round(overall)))>\'");
 	println("#--------------------------------------------------------------------------#");
 }
-
-int rankToInt(str rank) {
-	switch(rank) {
-		case "--": 
-			return -2;
-		case "-": 
-			return -1;
-		case "o": 
-			return 0;
-		case "+":
-			return 1;
-		case "++":
-			return 2;
-		default:
-			return 1000;  
-	}
-}
-
-str intToRank(int rankInt) {
-	switch(rankInt) {
-		case -2: 
-			return "--";
-		case -1: 
-			return "-";
-		case 0: 
-			return "o";
-		case 1:
-			return "+";
-		case 2:
-			return "++";
-		default:
-			return "Error, not -2, -1, 0, 1, or 2";  
-	}
-}
-

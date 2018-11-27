@@ -10,15 +10,15 @@ import IO;
 import util::FileSystem;
 
 
-public alias Rating = int;
-public Rating PLUS_PLUS = 2;
-public Rating PLUS = 1;
-public Rating ZERO = 0;
-public Rating MIN = -1;
-public Rating MIN_MIN = -2;
+public alias Rank = int;
+public Rank PLUS_PLUS = 2;
+public Rank PLUS = 1;
+public Rank ZERO = 0;
+public Rank MIN = -1;
+public Rank MIN_MIN = -2;
 
-// Convert the numeric rating to their string representation
-public str RatingToString(Rating r){
+// Convert the numeric Rank to their string representation
+public str RankToString(Rank r){
 	str result = "o";
 	switch(r){
 		case -2: result = "--";
