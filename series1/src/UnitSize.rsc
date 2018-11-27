@@ -83,13 +83,13 @@ public str determineRiskRank(int totalLOC, map[str, int] ranks) {
 }
 
 str determineRankForLines(int lines) {
-	if (lines > 50) {
+	if (lines > 60) {
 		return "very high";
 	}
-	else if (lines > 20) {
+	else if (lines > 30) {
 		return "high";
 	}
-	else if (lines > 10) {
+	else if (lines > 15) {
 		return "moderate";
 	}
 	else if (lines >= 0) {

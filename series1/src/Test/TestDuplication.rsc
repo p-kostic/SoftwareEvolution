@@ -12,7 +12,7 @@ test bool TestRabinKarpCase0() {
 	
 	int duplicateLines = RabinKarp(lines, 1);
 	int percentage = toInt(toReal(duplicateLines) / 10 * 100);
-	return percentage == 90;
+	return percentage == 100;
 }
 
 test bool TestRabinKarpCase1() {
@@ -21,8 +21,8 @@ test bool TestRabinKarpCase1() {
 	
 	int duplicateLines = RabinKarp(lines, 6);
 	int percentage = toInt(toReal(duplicateLines) / 10 * 100);
-
-	return percentage == 40;
+	println(duplicateLines);
+	return percentage == 100;
 }
 
 test bool TestRabinKarpCase2() {

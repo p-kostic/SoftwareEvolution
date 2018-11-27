@@ -8,7 +8,7 @@ import lang::java::jdt::m3::Core;
 import lang::java::jdt::m3::AST;
 
 // Simple Java Testing project for the unit tests that need either ASTs or M3s
-M3 mmm = createM3FromEclipseProject(|project://SimpleJava|);
+loc simpleJava = |project://SimpleJava|;
 
 test bool TestFilterLinesCase1() {
 	// A case where all 3 things we check for in the implementation occur
@@ -72,20 +72,59 @@ test bool TestFilterLinesCase4() {
 	return size(filterLines(edgeCase)) == 2;
 }
 
-test bool TestCountAllLOCCase1() {
-	// If counted by hand, we get 31 for the SimpleJava project. Check if the implementation is correct
-	return countAllLOC(mmm) == 31;
+test bool TestFilterLinesCase5(){
+	list[str] edgeCase = [
+		"/* Comment */ SomeCode();", // 1
+		"someCode();" 				 // 2
+	];
+	return size(filterLines(edgeCase)) == 2;
 }
 
-test bool TestCountAllLOCCase2() {
-	// To check if countAllLoc plays nicely with filteredLines,
-	// filteredLines should be in-between size 0 and the maximum size.
-	// countAllLOC is guaranteed to be 
-	my_classes = {e | <c, e> <- declaredTopTypes(mmm), isClass(e)};
-	list[str] lines = [*readFileLines(e) | e <- my_classes];	
-	int filteredLines = countAllLOC(mmm);
-	return filteredLines > 0 && filteredLines < size(lines); 
+test bool TestFilterLinesCase6(){
+	list[str] edgeCase = [
+		"\" /* SomeCode();", // 1
+		"someCode();*/ \"" 	 // 2
+	];
+	return size(filterLines(edgeCase)) == 2;
 }
+
+test bool TestFilterLinesCase7(){
+	list[str] edgeCase = [
+		"SomeCode(); /*", 	// 1
+		"someCode(); */",
+		"SomeCode();"		// 2
+	];
+	return size(filterLines(edgeCase)) == 2;
+}
+
+test bool TestFilterLinesCase8(){
+	list[str] edgeCase = [
+		"SomeCode(); /* Comment */ SomeCode();", 	// 1
+		"SomeCode();"								// 2
+	];
+	return size(filterLines(edgeCase)) == 2;
+}
+
+test bool TestFilterLinesCase9(){
+	list[str] edgeCase = [
+		"SomeCode(); /* Comment */", 	// 1
+		"SomeCode();"					// 2
+	];
+	return size(filterLines(edgeCase)) == 2;
+}
+
+test bool TestCountAllLOCCase1() {
+	// If counted by hand, we get 31 for the SimpleJava project. Check if the implementation is correct
+	return size(getLinesOfCode(simpleJava)) == 31;
+}
+
+//test bool TestCountAllLOCCase2() {
+//	// To check if countAllLoc plays nicely with filteredLines,
+//	// filteredLines should be in-between size 0 and the maximum size.
+//	// countAllLOC is guaranteed to be 
+//	int filteredLines = size(getLinesOfCode(simpleJava));
+//	return filteredLines > 0 && filteredLines < size(lines); 
+//}
 
 // From a simple example, test if it does indeed count everything for this AST
 test bool TestCountLCase1() {
