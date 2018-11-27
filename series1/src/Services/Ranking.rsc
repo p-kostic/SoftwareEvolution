@@ -13,12 +13,12 @@ public Rank MIN_MIN = -2;
 // Convert the numeric Rank to their string representation
 public str RankToString(Rank r){
 	str result = "o";
-	switch(r){
+	switch(r) {
 		case -2: result = "--";
 		case -1: result = "-";
-		case 0: result = "o";
-		case 1: result = "+";
-		case 2: result = "++";
+		case 0:  result = "o";
+		case 1:  result = "+";
+		case 2:  result = "++";
 	}
 	
 	return result;

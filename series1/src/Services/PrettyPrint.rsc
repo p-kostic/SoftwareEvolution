@@ -10,6 +10,14 @@ void prettyPrintBegin() {
 	println("#--------------------------------------------------------------------------#");
 }
 
+void prettyPrintVolume(int totalLOC, real KLOC, Rank volumeRank) {
+	println("#---------------------------# Volume Rank #--------------------------------#");
+	println("# For a codebase with <totalLOC> total lines of code");
+	println("# This is <KLOC> KLOC");
+	println("# Volume rank of \'<RankToString(volumeRank)>\'");
+	println("#--------------------------------------------------------------------------#");
+}
+
 void prettyPrintCycComplexity(real simple, real moderate, real high, real veryHigh, int totalLOC, int sum, Rank finalResult) {
 		real percentageTotal = simple + moderate + high + veryHigh;
 		

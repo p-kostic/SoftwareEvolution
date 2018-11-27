@@ -67,12 +67,9 @@ public int RabinKarp(list[str] lines, int windowsize){
 			windowPosition = i; // keep track of where the last hit was.
 			continue;
 		}
-		
 		corpus += hash;
 	}
-	
 	return result;
-
 }
 
 // Converts a list of lines to a list of their hashes.
