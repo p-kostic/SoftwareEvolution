@@ -14,8 +14,8 @@ import lang::java::jdt::m3::Core;
 import lang::java::jdt::m3::AST;
 
 //loc project = |project://SimpleJava|;
-// loc project = |project://smallsql0.21_src|;
-loc project = |project://src|;
+loc project = |project://smallsql0.21_src|;
+// loc project = |project://src|;
 
 void Main(){
 	println("#-------------------------# Beginning Analysis... #------------------------#");
@@ -33,8 +33,41 @@ void Main(){
 	list[str] lines = filterLines([*readFileLines(e) | e <- my_classes]);
 	str duplicateScore = GetDuplicateScore(lines, 6, totalLOC);
 	
+	
+		
+	map[str, tuple[int cc, int lines]] ranks = ("simple"    : <0,0>,
+										        "moderate"  : <0,0>,
+										        "high"      : <0,0>,
+										        "very high" : <0,0>);
+	
+	visit(asts) {
+		case m:method(_,name,_,_,impl): {
+			int cc = cyclomaticComplexity(impl);
+			int sloc = countL(m);
+			str level = determineCCAndLevelPerUnit(cc);
+			ranks[level].cc    += 1;
+			ranks[level].lines += sloc;
+			// println("Method <name> with complexity <cc> and <sloc> lines of code");
+		}
+		case c:constructor(name, _, _, impl): {
+			int cc = cyclomaticComplexity(impl);
+			int sloc = countL(c);
+			str level = determineCCAndLevelPerUnit(cc);
+			ranks[level].cc    += 1;
+			ranks[level].lines += sloc;
+		}
+		case i:initializer(impl): {
+			int cc = cyclomaticComplexity(impl);
+			int sloc = countL(i);
+			str level = determineCCAndLevelPerUnit(cc);
+			ranks[level].cc    += 1;
+			ranks[level].lines += sloc;
+		}
+	}
+
+	
 	// Complexity per unit
-	str CycCompScore = getCyclomaticFromAST(mmm, asts, totalLOC);
+	str CycCompScore = getCyclomaticFromAST(totalLOC, ranks);
 	
 	// Unit Size
 	str unitSizeScore = getUnitSizeFromAST(asts, totalLOC);

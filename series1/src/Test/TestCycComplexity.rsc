@@ -102,7 +102,7 @@ test bool TestDetermineRiskRankCase6() {
 
 // Test the risk evaluation for a given cc, test all branches, trivial test.
 test bool TestDetermineCCAndLevelPerUnit() {
-	if (determineCCAndLevelPerUnit(0) != "simple")     return false;
+	if (determineCCAndLevelPerUnit(0)  != "simple")     return false;
 	if (determineCCAndLevelPerUnit(11) != "moderate")  return false;
 	if (determineCCAndLevelPerUnit(21) != "high")      return false;
 	if (determineCCAndLevelPerUnit(51) != "very high") return false;

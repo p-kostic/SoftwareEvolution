@@ -4,6 +4,7 @@ import lang::java::m3::Core;
 import lang::java::m3::AST;
 import lang::java::jdt::m3::Core;
 import lang::java::jdt::m3::AST;
+import util::Math;
 import Prelude;
 import IO;
 
@@ -31,11 +32,16 @@ public list[str] filterLines(list[str] lines) {
 			continue;
 		}
 		
+		// Line starts with an /*
 		if(/^\/\*/ := line) { 
 			blockComment = true;
-			if (/\*\// := line)
+			// same line ends with an */, such that there is no block covering multiple lines
+			if (/\*\// := line) {
 				blockComment = false;
-			continue;
+			}
+			if (/(\*\/)$/ := line) {
+				continue;
+			}
 		}
 		
 		if(/^\*\// := line) {
@@ -64,4 +70,10 @@ public int countL(Declaration d) {
     loc source = d.src;
 	list[str] lines = readFileLines(source);
     return size(filterLines(lines));
+}
+
+// Given two integer, convert them to a Real number calculate the percentage value of the first argument
+// relative to the second argument.  
+public real calculatePercentage(int part, int total) {
+	return toReal(part) / toReal(total) * 100;
 }

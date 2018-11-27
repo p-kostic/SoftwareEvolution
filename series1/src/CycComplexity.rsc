@@ -9,40 +9,10 @@ import util::Math;
 
 // Our own modules
 import Utils;
+import PrettyPrint;
 
-public str getCyclomaticFromAST(M3 mmm, set[Declaration] asts, int totalLOC) {
-	
-	map[str, tuple[int cc, int lines]] ranks = ("simple"    : <0,0>,
-										        "moderate"  : <0,0>,
-										        "high"      : <0,0>,
-										        "very high" : <0,0>);
-	
-	// Get the cyclomatic complexity of each unit. Visit is bottom-up by default
-	visit(asts) {
-		// TODO: does this include constructors???
-		case m:method(_,name,_,_,impl): {
-			int cc = cyclomaticComplexity(impl);
-			int sloc = countL(m);
-			str level = determineCCAndLevelPerUnit(cc);
-			ranks[level].cc    += 1;
-			ranks[level].lines += sloc;
-			// println("Method <name> with complexity <cc> and <sloc> lines of code");
-		}
-		case c:constructor(name, _, _, impl): {
-			int cc = cyclomaticComplexity(impl);
-			int sloc = countL(c);
-			str level = determineCCAndLevelPerUnit(cc);
-			ranks[level].cc    += 1;
-			ranks[level].lines += sloc;
-		}
-		case i:initializer(impl): {
-			int cc = cyclomaticComplexity(impl);
-			int sloc = countL(i);
-			str level = determineCCAndLevelPerUnit(cc);
-			ranks[level].cc    += 1;
-			ranks[level].lines += sloc;
-		}
-	}
+public str getCyclomaticFromAST(int totalLOC, map[str, tuple[int cc, int lines]] ranks) {
+	println("#----------------------# Cyclomatic Complexity #---------------------------#");
 	str finalResult = determineRiskRank(totalLOC, ranks);
 	println("# Final System Rank for Complexity per unit: \'<finalResult>\'");
 	println("#--------------------------------------------------------------------------#");
@@ -50,49 +20,49 @@ public str getCyclomaticFromAST(M3 mmm, set[Declaration] asts, int totalLOC) {
 }
 
 public str determineRiskRank(int totalLOC, map[str, tuple[int cc, int lines]] ranks) {
+
 	int sum = ranks["simple"].lines + ranks["moderate"].lines + ranks["high"].lines + ranks["very high"].lines;
+	
+	// Given that we do not count class declerations for unit complexity, sum must be smaller than totalLOC. 
 	if (sum < totalLOC) {
-		real percentageSimple   = toReal(ranks["simple"].lines)    / toReal(totalLOC) * 100;
-		real percentageModerate = toReal(ranks["moderate"].lines)  / toReal(totalLOC) * 100;
-		real percentageHigh 	= toReal(ranks["high"].lines)      / toReal(totalLOC) * 100;
-		real percentageVeryHigh = toReal(ranks["very high"].lines) / toReal(totalLOC) * 100;
+		real percentageSimple   = calculatePercentage(ranks["simple"].lines,    totalLOC);
+		real percentageModerate = calculatePercentage(ranks["moderate"].lines,  totalLOC);
+		real percentageHigh 	= calculatePercentage(ranks["high"].lines,      totalLOC);
+		real percentageVeryHigh = calculatePercentage(ranks["very high"].lines, totalLOC);
 		
-		real percentageTotal = percentageSimple + percentageModerate + percentageHigh + percentageVeryHigh;
-
-		println("#----------------------# Cyclomatic Complexity #---------------------------#");
-		println("# For a codebase with <totalLOC> total lines of code, <sum> belongs to units");
-		println("# Rank Distribution:");
-		println("# - Simple:    <percentageSimple>%");
-		println("# - Moderate:  <percentageModerate>%");
-		println("# - High:      <percentageHigh>%");
-		println("# - Very High: <percentageVeryHigh>%");
-		println("# Total percentage: <percentageTotal>% of the codebase consists of units");
-
-		if (ranks["very high"].lines > 0) {
-			// Guaranteed to be at least a '-' system
-			
-			if (percentageModerate <= 50 && percentageHigh <= 15 && percentageVeryHigh <= 5) {
-				return "-";
-			}
-			return "--";
-		} else if (percentageModerate <= 25 && percentageHigh <= 10) {
-			return "++";
-		}
-		else if (percentageModerate <= 30 && percentageHigh <= 5) {
-			return "+";
-		}
-		else if (percentageModerate <= 40 && percentageHigh <= 10) {
-			return "o";
-		}
-		else if (percentageModerate <= 50 && percentageHigh <= 15) {
-			return "-";
-		}	
-		return "Error: Something went wrong in determining the risk rank";
+		// Pretty print descriptive statistics during calculation
+		prettyPrintDistribution(percentageSimple, percentageModerate, percentageHigh, percentageVeryHigh, totalLOC, sum);
+		
+		return finalRiskFromDist(percentageModerate, percentageHigh, percentageVeryHigh, ranks["very high"].lines);
 	} else {
 		return "Error: Something went wrong in determining the risk rank";
 	}
-	
 }
+
+public str finalRiskFromDist(real moderate, real high, real veryHigh, int veryHighLines) {
+		if (veryHighLines > 0) {
+			// Guaranteed to be at least a '-' system
+			
+			if (moderate <= 50 && high <= 15 && veryHigh <= 5) {
+				return "-";
+			}
+			return "--";
+		} else if (moderate <= 25 && high <= 10) {
+			return "++";
+		}
+		else if (moderate <= 30 && high <= 5) {
+			return "+";
+		}
+		else if (moderate <= 40 && high <= 10) {
+			return "o";
+		}
+		else if (moderate <= 50 && high <= 15) {
+			return "-";
+		}	
+		return "Error: Something went wrong in determining the risk rank";
+}
+
+
 
 str determineCCAndLevelPerUnit(int unitComplexity) {
 	if (unitComplexity > 50) {
