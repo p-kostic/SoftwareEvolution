@@ -4,7 +4,7 @@ import util::Math;
 import Prelude;
 import Utils;
 
-void prettyPrintCycComplexity(real simple, real moderate, real high, real veryHigh, int totalLOC, int sum, str finalResult) {
+void prettyPrintCycComplexity(real simple, real moderate, real high, real veryHigh, int totalLOC, int sum, Rank finalResult) {
 		real percentageTotal = simple + moderate + high + veryHigh;
 		
 		println("#----------------------# Cyclomatic Complexity #---------------------------#");
@@ -28,7 +28,7 @@ void prettyPrintDuplication(int windowsize, int totalLOC, int duplicatePercentag
 	println("#--------------------------------------------------------------------------#");
 }
 
-void prettyPrintUnitSize(real simples, real moderate, real high, real veryHigh, int totalLOC, int sum, str finalResult) {
+void prettyPrintUnitSize(real simples, real moderate, real high, real veryHigh, int totalLOC, int sum, Rank finalResult) {
 		real percentageTotal = simples + moderate + high + veryHigh;
 
 		println("#-----------------------------# Unit Size #--------------------------------#");

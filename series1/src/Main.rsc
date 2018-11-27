@@ -28,12 +28,11 @@ void Main(){
 	int totalLOC = size(lines);
 	set[Declaration] asts = createAstsFromEclipseProject(project, true);
 	
-	println(totalLOC);
 	// Volume
-	str volumeRank = GetVolumeRank(totalLOC);
+	Rank volumeRank = GetVolumeRank(totalLOC);
 	
 	// Calculate duplicate metrics
-	str duplicateScore = GetDuplicateScore(lines, 6, totalLOC);
+	Rank duplicateScore = GetDuplicateRank(lines, 6, totalLOC);
 		
 	map[str, int] ranksCC       = ("simple": 0, "moderate"  : 0, "high" : 0,"very high" : 0);				        
 	map[str, int] ranksUnitSize = ("simple": 0, "moderate"  : 0, "high" : 0,"very high" : 0);
@@ -67,16 +66,16 @@ void Main(){
 	}
 
 	// Complexity per unit
-	str CycCompScore = getCyclomaticFromAST(totalLOC, ranksCC);
+	Rank CycCompScore = getCyclomaticFromAST(totalLOC, ranksCC);
 	
 	// Unit Size
-	str unitSizeScore = getUnitSizeFromAST(totalLOC, ranksUnitSize);
+	Rank unitSizeScore = getUnitSizeFromAST(totalLOC, ranksUnitSize);
 	
 	println("#-------------------------# Final Results #--------------------------------#");
-	println("# Volume:              \'<volumeRank>\'");
-	println("# Duplication:         \'<duplicateScore>\'");
-	println("# Complexity per unit: \'<CycCompScore>\'");
-	println("# Unit Size:           \'<unitSizeScore>\'");
+	println("# Volume:              \'<RankToString(volumeRank)>\'");
+	println("# Duplication:         \'<RankToString(duplicateScore)>\'");
+	println("# Complexity per unit: \'<RankToString(CycCompScore)>\'");
+	println("# Unit Size:           \'<RankToString(unitSizeScore)>\'");
 	println("#--------------------------------------------------------------------------#");
 	calculateFinalScore(volumeRank, duplicateScore, CycCompScore, unitSizeScore);
 }
@@ -86,11 +85,11 @@ void Main(){
 // Changeability: Complexity, Duplication					   = total of 2 
 // Stability:     Unit Testing								   = total of 1 (0 no bonus)
 // Testability:   Complexity, Unit Size, Unit Testing		   = total of 2 (2 no bonus)
-void calculateFinalScore(str volumeRank, str duplicateRank, str cycCompScore, str unitSizeRank) {
-	real volumeRankInt    = toReal(rankToInt(volumeRank));
-	real duplicateRankInt = toReal(rankToInt(duplicateRank));
-	real cycRankInt       = toReal(rankToInt(cycCompScore)); 
-	real unitSizeRankInt  = toReal(rankToInt(unitSizeRank));
+void calculateFinalScore(Rank volumeRank, Rank duplicateRank, Rank cycCompScore, Rank unitSizeRank) {
+	real volumeRankInt    = toReal(volumeRank);
+	real duplicateRankInt = toReal(duplicateRank);
+	real cycRankInt       = toReal(cycCompScore); 
+	real unitSizeRankInt  = toReal(unitSizeRank);
 	
 	real analysability = (1 / 3.0) * duplicateRankInt + (1 / 3.0) * volumeRankInt +  (1/ 3.0) * unitSizeRankInt;
 	real changeability = 0.5 * cycRankInt + 0.5 * duplicateRankInt;
@@ -98,10 +97,10 @@ void calculateFinalScore(str volumeRank, str duplicateRank, str cycCompScore, st
 	real overall       = (1/ 3.0) * analysability + (1 / 3.0) * changeability + (1 / 3.0) * testability; 
 	
 	println("#--------------------# Maintainability Report #----------------------------#");
-	println("# Analysability of <analysability>   --\> \'<intToRank(toInt(round(analysability)))>\'");
-	println("# Changeability of <changeability> --\> \'<intToRank(toInt(round(changeability)))>\'");
-	println("# Testability of   <testability> --\> \'<intToRank(toInt(round(testability)))>\'");
+	println("# Analysability of <analysability>   --\> \'<RankToString(toInt(round(analysability)))>\'");
+	println("# Changeability of <changeability> --\> \'<RankToString(toInt(round(changeability)))>\'");
+	println("# Testability of   <testability> --\> \'<RankToString(toInt(round(testability)))>\'");
 	println("#");
-	println("# Overall:         <overall>  --\> \'<intToRank(toInt(round(overall)))>\'");
+	println("# Overall:         <overall>  --\> \'<RankToString(toInt(round(overall)))>\'");
 	println("#--------------------------------------------------------------------------#");
 }

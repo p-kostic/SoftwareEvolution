@@ -12,11 +12,11 @@ import util::Math;
 import Utils;
 import PrettyPrint;
 
-public str getCyclomaticFromAST(int totalLOC, map[str, int] ranks) {
+public Rank getCyclomaticFromAST(int totalLOC, map[str, int] ranks) {
 	return determineRiskRank(totalLOC, ranks);
 }
 
-public str determineRiskRank(int totalLOC, map[str, int] ranks) {
+public Rank determineRiskRank(int totalLOC, map[str, int] ranks) {
 
 	int sum = ranks["simple"] + ranks["moderate"] + ranks["high"] + ranks["very high"];
 	
@@ -27,7 +27,7 @@ public str determineRiskRank(int totalLOC, map[str, int] ranks) {
 		real percentageHigh 	= calculatePercentage(ranks["high"],      totalLOC);
 		real percentageVeryHigh = calculatePercentage(ranks["very high"], totalLOC);
 		
-		str finalRanking = finalRiskFromDist(percentageModerate, percentageHigh, percentageVeryHigh, ranks["very high"]);
+		Rank finalRanking = finalRiskFromDist(percentageModerate, percentageHigh, percentageVeryHigh, ranks["very high"]);
 		
 		// Pretty print descriptive statistics during calculation
 		prettyPrintCycComplexity(percentageSimple, percentageModerate, percentageHigh, percentageVeryHigh, totalLOC, sum, finalRanking);
@@ -38,27 +38,28 @@ public str determineRiskRank(int totalLOC, map[str, int] ranks) {
 	}
 }
 
-public str finalRiskFromDist(real moderate, real high, real veryHigh, int veryHighLines) {
+public Rank finalRiskFromDist(real moderate, real high, real veryHigh, int veryHighLines) {
+		Rank result = -100; // -100 if there is an error
 		if (veryHighLines > 0) {
 			// Guaranteed to be at least a '-' system
 			
 			if (moderate <= 50 && high <= 15 && veryHigh <= 5) {
-				return "-";
+				result = -1;
 			}
-			return "--";
+			result = -2;
 		} else if (moderate <= 25 && high <= 10) {
-			return "++";
+			result = 2;
 		}
 		else if (moderate <= 30 && high <= 5) {
-			return "+";
+			result = 1;
 		}
 		else if (moderate <= 40 && high <= 10) {
-			return "o";
+			result = 0;
 		}
 		else if (moderate <= 50 && high <= 15) {
-			return "-";
+			result = -1;
 		}	
-		return "Error: Something went wrong in determining the risk rank";
+		return result;
 }
 
 str determineCCAndLevelPerUnit(int unitComplexity) {
