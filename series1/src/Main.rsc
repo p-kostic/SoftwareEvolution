@@ -52,16 +52,22 @@ void Main(){
 			str levelUnitSize      = determineRankForLines(sloc);
 			ranksCC[levelCC]       += sloc;
 			ranksUnitSize[levelUnitSize] += sloc;
+			
+			// Parameter metric data
 			methodCount += 1;
 			totalParameterCount += size(params);
 		}
-		case c:constructor(name, _, _, impl): {
+		case c:constructor(name, params, _, impl): {
 			int cc                 = cyclomaticComplexity(impl);
 			int sloc               = countL(c);
 			str levelCC            = determineCCAndLevelPerUnit(cc);
 			str levelUnitSize      = determineRankForLines(sloc);
 			ranksCC[levelCC]       += sloc;
 			ranksUnitSize[levelUnitSize] += sloc;
+			
+			// Parameter metric data
+			methodCount += 1;
+			totalParameterCount += size(params);
 		}
 		case i:initializer(impl): {
 			int cc                 = cyclomaticComplexity(impl);
@@ -77,9 +83,12 @@ void Main(){
 	Rank unitSizeScore = getUnitSizeFromASTData(totalLOC, ranksUnitSize);   // Unit Size
 	list[real] maintainabilityRankings = calculateFinalRank(volumeRank, duplicateScore, CycCompScore, unitSizeScore);
 	
+	prettyPrintFinalResults(volumeRank, duplicateScore, CycCompScore, unitSizeScore);
+	
+	list[real] maintainabilityRankings = calculateFinalRank(volumeRank, duplicateScore, CycCompScore, unitSizeScore);
+	prettyPrintMaintainability(maintainabilityRankings);
+	
+	// Extra Metrics
 	real averageParametersPerUnit = totalParameterCount / toReal(methodCount);
 	Rank parameterRank = getParameterRank(averageParametersPerUnit);	// Parameters
-	
-	prettyPrintFinalResults(volumeRank, duplicateScore, CycCompScore, unitSizeScore);
-	prettyPrintMaintainability(maintainabilityRankings);
 }

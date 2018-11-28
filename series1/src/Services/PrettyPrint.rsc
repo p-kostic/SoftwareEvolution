@@ -77,3 +77,10 @@ void prettyPrintMaintainability(list[real] maintainabilityRanking) {
 	println("#--------------------------------------------------------------------------#");
 }
 
+void prettyPrintExtraMetrics(real paramPerUnit, Rank paramRank){
+	println("#-------------------------# Extra Metrics #--------------------------------#");
+	println("# Parameters --------------------------------------------------------------#");
+	println("# Average Per Unit: <paramPerUnit>");
+	println("# Rank:            \'<RankToString(paramRank)>\'");
+	println("#--------------------------------------------------------------------------#");
+}
