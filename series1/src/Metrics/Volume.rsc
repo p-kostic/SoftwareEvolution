@@ -13,15 +13,15 @@ Rank GetVolumeRank(int totalLOC){
 	Rank result = -100;
 	
 	if (kloc < 66){
-		result = 2;	
+		result = PLUS_PLUS;	
 	}else if(kloc < 246){
-		result = 1;
+		result = PLUS;
 	}else if(kloc < 665){
-		result = 0;
+		result = ZERO;
 	}else if(kloc < 1310){
-		result = -1;
+		result = MIN;
 	}else{
-		result = -2;
+		result = MIN_MIN;
 	}
 	
 	prettyPrintVolume(totalLOC, kloc, result);

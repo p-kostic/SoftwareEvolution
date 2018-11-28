@@ -1,6 +1,8 @@
 module Test::TestUtils
 
 import Prelude;
+import IO; 
+import util::FileSystem;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
 import lang::java::jdt::m3::Core;
@@ -107,21 +109,33 @@ test bool TestFilterLinesCase8(){
 	return size(filterLines(edgeCase)) == 2;
 }
 
-test bool TestCountAllLOCCase1() {
+test bool TestGetLinesOfCodeCase1() {
 	// If counted by hand, we get 31 for the SimpleJava project. Check if the implementation is correct
 	return size(getLinesOfCode(simpleJava)) == 31;
 }
 
-//test bool TestCountAllLOCCase2() {
-//	// To check if countAllLoc plays nicely with filteredLines,
-//	// filteredLines should be in-between size 0 and the maximum size.
-//	// countAllLOC is guaranteed to be 
-//	int filteredLines = size(getLinesOfCode(simpleJava));
-//	return filteredLines > 0 && filteredLines < size(lines); 
-//}
+test bool TestGetLinesOfCodeCase2() {
+	// To check if getLinesOfCode actually filters lines for the simpleJava test case,
+	// filteredLines should be in-between size 0 and the maximum size.
+	set[loc]  files = {f | f <- visibleFiles(simpleJava), /\.java/ := f.file};
+	list[str] lines = [*readFileLines(f) | f <- files];
+	
+	int filteredLines = size(getLinesOfCode(simpleJava));
+	return filteredLines > 0 && filteredLines < size(lines); 
+}
 
-// From a simple example, test if it does indeed count everything for this AST
+// From a simple example, test if it counts everything for this AST
 test bool TestCountLCase1() {
 	Declaration d = createAstFromFile(|project://SimpleJava/src/Test.java|, true);
 	return countL(d) == 5;
 }
+
+// Test multiple instances of percentage calculation, trivial test
+test bool testCountPercentage() {
+	for (int i <- [0..10]) {
+		if (calculatePercentage(i * 10, 100) != i * 10) return false;
+	} 
+	return true;
+}
+
+

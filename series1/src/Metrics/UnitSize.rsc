@@ -13,11 +13,7 @@ import Services::Utils;
 import Services::PrettyPrint;
 import Services::Ranking;
 
-public Rank getUnitSizeFromAST(int totalLOC, map[str, int] ranks) {
-	return determineRiskRank(totalLOC, ranks);
-}
-
-public Rank determineRiskRank(int totalLOC, map[str, int] ranks) {
+public Rank getUnitSizeFromASTData(int totalLOC, map[str, int] ranks) {
 
 	int sum = ranks["simple"] + ranks["moderate"] + ranks["high"] + ranks["very high"];
 	

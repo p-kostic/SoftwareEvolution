@@ -20,7 +20,6 @@ public str RankToString(Rank r){
 		case 1:  result = "+";
 		case 2:  result = "++";
 	}
-	
 	return result;
 }
 
@@ -32,8 +31,9 @@ public Rank finalRiskFromDist(real moderate, real high, real veryHigh, int veryH
 			
 			if (moderate <= 50 && high <= 15 && veryHigh <= 5) {
 				result = -1;
+			} else {
+				result = -2;
 			}
-			result = -2;
 		} else if (moderate <= 25 && high <= 10) {
 			result = 2;
 		}

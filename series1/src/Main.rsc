@@ -73,8 +73,9 @@ void Main(){
 		}
 	}
 
-	Rank CycCompScore = getCyclomaticFromAST(totalLOC, ranksCC);        // Complexity per unit
-	Rank unitSizeScore = getUnitSizeFromAST(totalLOC, ranksUnitSize);   // Unit Size
+	Rank CycCompScore = getCyclomaticFromASTData(totalLOC, ranksCC);        // Complexity per unit
+	Rank unitSizeScore = getUnitSizeFromASTData(totalLOC, ranksUnitSize);   // Unit Size
+	list[real] maintainabilityRankings = calculateFinalRank(volumeRank, duplicateScore, CycCompScore, unitSizeScore);
 	
 	real averageParametersPerUnit = totalParameterCount / toReal(methodCount);
 	Rank parameterRank = getParameterRank(averageParametersPerUnit);	// Parameters
