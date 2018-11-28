@@ -26,11 +26,6 @@ test bool TestRankToString() {
 	return true;
 }
 
-// Note: finalRiskFromDist is implicitily tested for correctness in TestCycComplexity.rsc and TestUnitSize.rsc
-
-test bool TestCalculateFinalRank() {
-	return true;
-}
 
 
 

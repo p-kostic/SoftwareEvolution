@@ -21,9 +21,9 @@ import Services::PrettyPrint;
 import Services::Ranking;
 
 // loc project = |project://SimpleJava|;
-loc project = |project://smallsql0.21_src|;
-// loc project = |project://hsqldb-2.3.1|;
-// loc project = |project://src|;
+// loc project = |project://smallsql0.21_src|;
+loc project = |project://src|; // <------ project://hsqldb-2.3.1, 
+                               // but only the src folder as specified in the assignment documentation
 
 void Main(){
 	prettyPrintBegin();
@@ -84,8 +84,6 @@ void Main(){
 	list[real] maintainabilityRankings = calculateFinalRank(volumeRank, duplicateScore, CycCompScore, unitSizeScore);
 	
 	prettyPrintFinalResults(volumeRank, duplicateScore, CycCompScore, unitSizeScore);
-	
-	list[real] maintainabilityRankings = calculateFinalRank(volumeRank, duplicateScore, CycCompScore, unitSizeScore);
 	prettyPrintMaintainability(maintainabilityRankings);
 	
 	// Extra Metrics

@@ -1,7 +1,7 @@
 module Test::TestDuplication
 import util::Math;
 
-import Duplication;
+import Metrics::Duplication;
 import Prelude;
 
 
@@ -20,7 +20,6 @@ test bool TestRabinKarpCase1() {
 	list[str] lines = ["1", "1", "1", "1", "1", "1", "1", "1", "1", "1"];
 	
 	int duplicateLines = RabinKarp(lines, 6);
-	println(duplicateLines);
 	return duplicateLines == 4;
 }
 
@@ -43,6 +42,5 @@ test bool TestRabinKarpCase2() {
 test bool TestRabinKarpCase3() {
 	list[str] lines = ["1", "1", "0", "0", "1","1","2","2", "0","2","2"];
 	int duplicateLines = RabinKarp(lines,2);
-	println(duplicateLines);
 	return duplicateLines == 4;
 }
