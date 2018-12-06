@@ -38,27 +38,35 @@ list[map[node,node]] Preprocess(set[Declaration] asts) {
 		totalNodes += countNodes(ast);	
 	}
 	
-	// 10% of N buckets
-	int bucketThreshold = toInt((totalNodes / size(asts)) * 0.1); 
-	list[map[node, node]] result = [() | s <- [1..bucketThreshold] ];
+	// 10% of average max subtree mass buckets
+	int bucketThreshold = toInt(totalNodes / size(asts) * 0.1); 
+	list[map[node, node]] result = [() | s <- [1..bucketThreshold + 1] ];
 	
-	bucketThreshold = 5;
+	//bucketThreshold = 5;
 	for (ast <- asts) {
-		top-down visit(ast) {
+		visit(ast) {
 			case node n: {
 				int nn = countNodes(n);
-				int index = min(nn / bucketThreshold, size(result) -1);
 				
-				//println("nodes in subtree <nn> with threshold <bucketThreshold>" );
-				//println(index);
-				
-				result[index] = result[index] + (n:n);
+				// Ignore small subtrees
+				if(nn > 2){
+					int index = nn % bucketThreshold;
+					result[index] = result[index] + (n:n);				
+				}
 				
 			}
 		}
 	}
 	return result;
 }
+
+void CompareBucket(map[node,node] bucket){
+	r = toList(bucket);
+	fullRelation = r * r;
+	
+	
+}
+
 
 int countNodes(node ast) {
 	int count = 0;
@@ -69,12 +77,3 @@ int countNodes(node ast) {
 	return count;
 }
 
-
-int maxSizeDeelBoom(node ast){
-	int max = 9999999999999;
-	visit(ast) {
-		case node n: {
-			int amount = countNodes(n);
-		}
-	}
-}
