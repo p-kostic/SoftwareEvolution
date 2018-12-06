@@ -23,36 +23,58 @@ void Main() {
 	int totalLOC = size(lines);
 	set[Declaration] asts = createAstsFromEclipseProject(project, true);
 	
-	list[list[Declaration]] buckets = Preprocess(asts);
+	println(size(asts));
+	list[map[node,node]] buckets = Preprocess(asts);
+	// iprintln(buckets);
+	list[int] dist = [size(a) | a <- buckets];
+	iprintln(dist);
 }
 
 // Buckets of sub trees
-list[list[Declaration]] Preprocess(set[Declaration] asts) {
+list[map[node,node]] Preprocess(set[Declaration] asts) {
 	
 	int totalNodes = 0;
 	for (ast <- asts) {
 		totalNodes += countNodes(ast);	
 	}
 	
-	int bucketThreshold = toInt(totalNodes * 0.1); // 10% of N buckets
-	list[list[Declaration]] result = [[] | s <- [1..bucketThreshold] ];
+	// 10% of N buckets
+	int bucketThreshold = toInt((totalNodes / size(asts)) * 0.1); 
+	list[map[node, node]] result = [() | s <- [1..bucketThreshold] ];
 	
+	bucketThreshold = 5;
 	for (ast <- asts) {
-		visit(ast) {
-			case Node: {
-				int index = countNodes(ast) / bucketThreshold;
-				result[index] = result[index] + ast;
+		top-down visit(ast) {
+			case node n: {
+				int nn = countNodes(n);
+				int index = min(nn / bucketThreshold, size(result) -1);
+				
+				//println("nodes in subtree <nn> with threshold <bucketThreshold>" );
+				//println(index);
+				
+				result[index] = result[index] + (n:n);
+				
 			}
 		}
 	}
 	return result;
 }
 
-int countNodes(Declaration ast) {
+int countNodes(node ast) {
 	int count = 0;
 	visit(ast) {
-		case Node: 
-			count += 1;
+		case node n: {
+			count += 1;}
 	}
 	return count;
+}
+
+
+int maxSizeDeelBoom(node ast){
+	int max = 9999999999999;
+	visit(ast) {
+		case node n: {
+			int amount = countNodes(n);
+		}
+	}
 }
