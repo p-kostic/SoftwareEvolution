@@ -78,3 +78,28 @@ int maxSizeDeelBoom(node ast){
 		}
 	}
 }
+
+
+real similarity(node tree1, node tree2) {
+	// Visit the subtree of the argument nodes
+	// Copy them to lists t1 and t2, such that
+	// We can calculate similarity scores from there
+	
+	list[node] t1 = [];
+	list[node] t2 = [];
+	
+	visit(tree1) {
+		case node x:
+			t1 += x;
+	}
+	visit(tree2) {
+		case node x:
+			t2 += x; 
+	}
+	
+	real s = toReal(size(t1 & t2));
+	real l = toReal(size(t1 - t2));
+	real r = toReal(size(t2 - t1));
+	
+	return (2 * s) / (2 * s + l + r);
+}
