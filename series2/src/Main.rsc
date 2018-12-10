@@ -37,6 +37,11 @@ void Main() {
 
 }
 
+// TODO:
+// - Buckets alleen  gelijke grote bevatten van subtrees
+//   Dus |b| = |unieke subtree sizes|
+
+
 // Buckets of sub trees
 list[map[node,node]] Preprocess(set[Declaration] asts) {
 	
