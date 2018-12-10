@@ -9,6 +9,9 @@ import lang::java::m3::Core;
 import lang::java::m3::AST;
 import lang::java::jdt::m3::Core;
 import lang::java::jdt::m3::AST;
+import Comparison;
+import Prelude;
+
 
 // Own modules
 import utils::HelperFunctions;
@@ -26,8 +29,10 @@ void Main() {
 	println(size(asts));
 	list[map[node,node]] buckets = Preprocess(asts);
 	// iprintln(buckets);
-	list[int] dist = [size(a) | a <- buckets];
-	iprintln(dist);
+	
+	CompareBucket(buckets[0]);
+	//list[int] dist = [size(a) | a <- buckets];
+	//iprintln(dist);
 }
 
 // Buckets of sub trees
@@ -46,12 +51,16 @@ list[map[node,node]] Preprocess(set[Declaration] asts) {
 	for (ast <- asts) {
 		visit(ast) {
 			case node n: {
-				int nn = countNodes(n);
-				
-				// Ignore small subtrees
-				if(nn > 2){
-					int index = nn % bucketThreshold;
-					result[index] = result[index] + (n:n);				
+				if(("src" in getKeywordParameters(n))){
+					int nn = countNodes(n);
+					
+					// Ignore small subtrees and check if the node has a source location
+					if(nn > 2){
+						int index = nn % bucketThreshold;
+						result[index] = result[index] + (n:n);				
+						
+					}
+					
 				}
 				
 			}
@@ -60,12 +69,7 @@ list[map[node,node]] Preprocess(set[Declaration] asts) {
 	return result;
 }
 
-void CompareBucket(map[node,node] bucket){
-	r = toList(bucket);
-	fullRelation = r * r;
-	
-	
-}
+
 
 
 int countNodes(node ast) {
@@ -77,26 +81,3 @@ int countNodes(node ast) {
 	return count;
 }
 
-real similarity(node tree1, node tree2) {
-	// Visit the subtree of the argument nodes
-	// Copy them to lists t1 and t2, such that
-	// We can calculate similarity scores from there
-	
-	list[node] t1 = [];
-	list[node] t2 = [];
-	
-	visit(tree1) {
-		case node x:
-			t1 += x;
-	}
-	visit(tree2) {
-		case node x:
-			t2 += x; 
-	}
-	
-	real s = toReal(size(t1 & t2));
-	real l = toReal(size(t1 - t2));
-	real r = toReal(size(t2 - t1));
-	
-	return (2 * s) / (2 * s + l + r);
-}
