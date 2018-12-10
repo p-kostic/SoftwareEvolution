@@ -16,8 +16,8 @@ import Prelude;
 // Own modules
 import utils::HelperFunctions;
 
-// loc project = |project://SimpleJava|;
-loc project = |project://smallsql0.21_src|;
+ loc project = |project://SimpleJava|;
+//loc project = |project://smallsql0.21_src|;
 // loc project = |project://src|; // <------ project://hsqldb-2.3.1, 
                                   // but only the src folder as specified in the assignment documentation
 
@@ -28,11 +28,13 @@ void Main() {
 	
 	println(size(asts));
 	list[map[node,node]] buckets = Preprocess(asts);
-	// iprintln(buckets);
+	 //iprintln(buckets);
+
+	list[int] dist = [size(a) | a <- buckets];
+	iprintln(dist);
 	
 	CompareBucket(buckets[0]);
-	//list[int] dist = [size(a) | a <- buckets];
-	//iprintln(dist);
+
 }
 
 // Buckets of sub trees
@@ -44,7 +46,8 @@ list[map[node,node]] Preprocess(set[Declaration] asts) {
 	}
 	
 	// 10% of average max subtree mass buckets
-	int bucketThreshold = toInt(totalNodes / size(asts) * 0.1); 
+	//int bucketThreshold = toInt(totalNodes / size(asts) * 0.1); 
+	int bucketThreshold = 1;
 	list[map[node, node]] result = [() | s <- [1..bucketThreshold + 1] ];
 	
 	//bucketThreshold = 5;
