@@ -11,14 +11,7 @@ import lang::java::jdt::m3::AST;
 import util::Math;
 import List;
 
-void ProcessBuckets(list[map[node,node]] buckets){
-	set[tuple[loc,loc]] result = {};
-	for(b <- buckets){
-		result += CompareBucket(b);
-	}
-}
-
-set[tuple[loc,loc]] CompareBucket(list[node] bucket, set[tuple[loc,loc]] clones){
+set[tuple[loc,loc]] CompareBucket(list[node] bucket, rel[loc,loc] clones){
 	//println("Started bucket comparison");
 	lrel[node,node] reflexiveClosure = bucket * bucket;
 	lrel[node,node] relation = [];
@@ -31,25 +24,34 @@ set[tuple[loc,loc]] CompareBucket(list[node] bucket, set[tuple[loc,loc]] clones)
 	
 	result = {};
 	for(<n1, n2> <- relation){
-		sim = similarity(n1, n1.src, n2, n2.src);
-		if(sim[1] > 0.99){
-			result += <sim[0], sim[1]>;		
+		if (!checkSubclones(n1.src, n2.src, clones)) {
+			sim = similarity(n1, n1.src, n2, n2.src);
+			if(sim[2] > 0.99){
+				result += <sim[0], sim[1]>;		
+			}
 		}
 	}
 	
-	//result = sort(result, bool(tuple[loc, loc, real] a, tuple[loc, loc, real] b){ return a[2] > b[2]; });
-	//for(sim <- result){
-	//	println(sim);
-	//	
-	//}
+	for(sim <- result){
+		println(sim);
+		
+	}
 	
 	return result;
 	//println("Converted bucket to relation");
 }
 
+bool checkSubclones(loc l1, loc l2, rel[loc,loc] clones){
+	for(<a1,a2> <- clones){
+		return (betweenLocSameFile(a1, l1) && betweenLocSameFile(a2, l2)) 
+		|| (betweenLocSameFile(a1, l2) && betweenLocSameFile(a2, l1));
+	}
+	return false;
+}
+
+// True if l2 inbetween l1 for the same file
 bool betweenLocSameFile(loc l1, loc l2) {
 	// Between
-	println("<l1.path> and <l2.path>");
 	if (l1.path == l2.path) {
 		if (l1.begin.line <= l2.begin.line && l1.end.line >= l2.end.line)
 			return true;
@@ -134,7 +136,7 @@ public node normalizeNodeDec(node ast) {
 
 str removeLocFromString(str input){
 	input = visit(input){ 
-		case /([|])(?:(?=(\\?))\2.)*?\1/ => "|project://blabla|"
+		case /([|])(?:(?=(\\?))\2.)*?\1/ => ""
 		
 	}
 	

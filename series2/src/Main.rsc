@@ -5,6 +5,7 @@ import Prelude;
 import String;
 import util::Math;
 import Node;
+import DateTime;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
 import lang::java::jdt::m3::Core;
@@ -17,14 +18,18 @@ import Map;
 // Own modules
 import utils::HelperFunctions;
 
-loc project = |project://SimpleJava|;
-// loc project = |project://smallsql0.21_src|;
+// loc project = |project://SimpleJava|;
+loc project = |project://smallsql0.21_src|;
 // loc project = |project://src|; // <------ project://hsqldb-2.3.1, 
                                   // but only the src folder as specified in the assignment documentation
 
 void Main() {
 	//list[str] lines = getLinesOfCode(project);
 	//int totalLOC = size(lines);
+	
+	datetime begin = now();
+	
+
 	set[Declaration] asts = createAstsFromEclipseProject(project, true);
 	
 	println(size(asts));
@@ -39,11 +44,13 @@ void Main() {
 	list[int] dist = [size(buckets[a]) | a <- buckets];
 	iprintln(dist);
 	
+	rel[loc,loc] result = {};
 	int s = size(buckets);
 	int counter = 0;
 	for(i <- [(size(keys) - 1)..-1]){
-		println("<counter>/<s>");
-		CompareBucket(buckets[keys[i]]);
+		Duration runningTime = createDuration(begin,now());
+		println("<counter>/<s> with size <size(buckets[keys[i]])> and time <toString(runningTime.minutes)>:<(runningTime.seconds)>");
+		result += CompareBucket(buckets[keys[i]], result);
 		counter += 1;
 	}
 }
@@ -60,7 +67,7 @@ map[int, list[node]] Preprocess2(set[Declaration] asts){
 				if(("src" in getKeywordParameters(n))){
 					int nn = countNodes(n);
 					
-					if(nn > 2){
+					if(nn > 25){
 						if(nn in buckets){
 							buckets[nn] += n;
 						}else{
