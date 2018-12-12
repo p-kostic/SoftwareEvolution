@@ -12,12 +12,13 @@ import util::Math;
 import List;
 
 void ProcessBuckets(list[map[node,node]] buckets){
+	set[tuple[loc,loc]] result = {};
 	for(b <- buckets){
-		CompareBucket(b);
+		result += CompareBucket(b);
 	}
 }
 
-void CompareBucket(list[node] bucket){
+set[tuple[loc,loc]] CompareBucket(list[node] bucket, set[tuple[loc,loc]] clones){
 	//println("Started bucket comparison");
 	lrel[node,node] reflexiveClosure = bucket * bucket;
 	lrel[node,node] relation = [];
@@ -28,19 +29,21 @@ void CompareBucket(list[node] bucket){
 		}
 	}
 	
-	result = [];
-	for(i <- [0..size(relation)]){
-		sim = similarity(relation[i][0], relation[i][0].src, relation[i][1], relation[i][1].src);
-		result += sim;
+	result = {};
+	for(<n1, n2> <- relation){
+		sim = similarity(n1, n1.src, n2, n2.src);
+		if(sim[1] > 0.99){
+			result += <sim[0], sim[1]>;		
+		}
 	}
 	
-	result = sort(result, bool(tuple[loc, loc, real] a, tuple[loc, loc, real] b){ return a[2] > b[2]; });
-	for(sim <- result){
-		println(sim);
-		
-	}
+	//result = sort(result, bool(tuple[loc, loc, real] a, tuple[loc, loc, real] b){ return a[2] > b[2]; });
+	//for(sim <- result){
+	//	println(sim);
+	//	
+	//}
 	
-	
+	return result;
 	//println("Converted bucket to relation");
 }
 
