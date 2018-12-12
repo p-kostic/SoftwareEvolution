@@ -47,6 +47,17 @@ set[tuple[loc,loc]] CompareBucket(list[node] bucket, set[tuple[loc,loc]] clones)
 	//println("Converted bucket to relation");
 }
 
+bool betweenLocSameFile(loc l1, loc l2) {
+	// Between
+	println("<l1.path> and <l2.path>");
+	if (l1.path == l2.path) {
+		if (l1.begin.line <= l2.begin.line && l1.end.line >= l2.end.line)
+			return true;
+	}
+	return false;
+}
+
+
 tuple[loc, loc, real] similarity(node tree1, loc l1, node tree2, loc l2) {
 	tuple[loc, loc, real] result;
 	// Visit the subtree of the argument nodes

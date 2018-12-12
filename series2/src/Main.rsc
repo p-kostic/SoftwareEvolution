@@ -17,8 +17,8 @@ import Map;
 // Own modules
 import utils::HelperFunctions;
 
-//loc project = |project://SimpleJava|;
-loc project = |project://smallsql0.21_src|;
+loc project = |project://SimpleJava|;
+// loc project = |project://smallsql0.21_src|;
 // loc project = |project://src|; // <------ project://hsqldb-2.3.1, 
                                   // but only the src folder as specified in the assignment documentation
 
@@ -46,15 +46,11 @@ void Main() {
 		CompareBucket(buckets[keys[i]]);
 		counter += 1;
 	}
-	
-
 }
 
 // TODO:
 // - Buckets alleen  gelijke grote bevatten van subtrees
 //   Dus |b| = |unieke subtree sizes|
-
-
 map[int, list[node]] Preprocess2(set[Declaration] asts){
 	map[int, list[node]] buckets = ();
 	
@@ -80,10 +76,6 @@ map[int, list[node]] Preprocess2(set[Declaration] asts){
 	return buckets;
 }
 
-
-
-
-
 // Buckets of sub trees
 list[map[node,node]] Preprocess(set[Declaration] asts) {
 	
@@ -107,20 +99,14 @@ list[map[node,node]] Preprocess(set[Declaration] asts) {
 					// Ignore small subtrees and check if the node has a source location
 					if(nn > 2){
 						int index = nn % bucketThreshold;
-						result[index] = result[index] + (n:n);				
-						
-					}
-					
+						result[index] = result[index] + (n:n);					
+					}	
 				}
-				
 			}
 		}
 	}
 	return result;
 }
-
-
-
 
 int countNodes(node ast) {
 	int count = 0;
