@@ -17,8 +17,8 @@ import Map;
 // Own modules
 import utils::HelperFunctions;
 
-loc project = |project://SimpleJava|;
-//loc project = |project://smallsql0.21_src|;
+//loc project = |project://SimpleJava|;
+loc project = |project://smallsql0.21_src|;
 // loc project = |project://src|; // <------ project://hsqldb-2.3.1, 
                                   // but only the src folder as specified in the assignment documentation
 
@@ -28,16 +28,23 @@ void Main() {
 	set[Declaration] asts = createAstsFromEclipseProject(project, true);
 	
 	println(size(asts));
-	map[int, list[node]] buckets = Preprocess2(asts);
+	map[int, list[node]] rawbuckets = Preprocess2(asts);
+	map[int, list[node]] buckets = (b : rawbuckets[b] | b <- rawbuckets, size(rawbuckets[b]) > 1);
 	
-	list[int] dist = [size(buckets[a]) | a <- buckets, size(buckets[a]) > 1];
+	list[int] keys = sort(domain(buckets));
+	
+	//println(keys);
+	//return;
+	
+	list[int] dist = [size(buckets[a]) | a <- buckets];
 	iprintln(dist);
 	
-	for(a <- buckets){
-		if(size(buckets[a]) > 1){
-			CompareBucket(buckets[a]);
-		}
-		
+	int s = size(buckets);
+	int counter = 0;
+	for(i <- [(size(keys) - 1)..-1]){
+		println("<counter>/<s>");
+		CompareBucket(buckets[keys[i]]);
+		counter += 1;
 	}
 	
 
@@ -59,9 +66,9 @@ map[int, list[node]] Preprocess2(set[Declaration] asts){
 					
 					if(nn > 2){
 						if(nn in buckets){
-							buckets[nn] += normalizeNodeDec(n);
+							buckets[nn] += n;
 						}else{
-							buckets = buckets + (nn:[normalizeNodeDec(n)]);
+							buckets = buckets + (nn:[n]);
 						}
 					}
 				}
@@ -74,32 +81,7 @@ map[int, list[node]] Preprocess2(set[Declaration] asts){
 }
 
 
-public node normalizeNodeDec(node ast) {
-    return visit (ast) {
-        case \method(x, _, y, z, q) => \method(lang::java::jdt::m3::AST::short(), "methodName", y, z, q)
-        case \parameter(x, _, z) => \parameter(x, "paramName", z)
-        case \vararg(x, _) => \vararg(x, "varArgName") 
-        case \annotationTypeMember(x, _) => \annotationTypeMember(x, "annonName")
-        case \annotationTypeMember(x, _, y) => \annotationTypeMember(x, "annonName", y)
-        case \typeParameter(_, x) => \typeParameter("typeParaName", x)
-        case \constructor(_, x, y, z) => \constructor("constructorName", x, y, z)
-        case \interface(_, x, y, z) => \interface("interfaceName", x, y, z)
-        case \class(_, x, y, z) => \class("className", x, y, z)
-        case \enumConstant(_, y) => \enumConstant("enumName", y) 
-        case \enumConstant(_, y, z) => \enumConstant("enumName", y, z)
-        case \methodCall(x, _, z) => \methodCall(x, "methodCall", z)
-        case \methodCall(x, y, _, z) => \methodCall(x, y, "methodCall", z) 
-        case Type _ => lang::java::jdt::m3::AST::short()
-        case Modifier _ => lang::java::jdt::m3::AST::\private()
-        case \simpleName(_) => \simpleName("simpleName")
-        case \number(_) => \number("1337")
-        case \variable(x,y) => \variable("variableName",y) 
-        case \variable(x,y,z) => \variable("variableName",y,z) 
-        case \booleanLiteral(_) => \booleanLiteral(true)
-        case \stringLiteral(_) => \stringLiteral("StringLiteralThingy")
-        case \characterLiteral(_) => \characterLiteral("q")
-    }
-}
+
 
 
 // Buckets of sub trees
