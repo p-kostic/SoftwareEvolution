@@ -16,8 +16,8 @@ set[tuple[loc,loc]] CompareBucket(list[node] bucket, rel[loc,loc] clones){
 	lrel[node,node] reflexiveClosure = bucket * bucket;
 	lrel[node,node] relation = [];
 	
-	for(<a,b> <- reflexiveClosure){
-		if(<b,a> notin relation && b != a){
+	for(<node a,node b> <- reflexiveClosure){
+		if(<b,a> notin relation && a != b && getName(b) == getName(a)){
 			relation += <a,b>;
 		}
 	}
