@@ -57,6 +57,8 @@ void Main() {
 	
 	iprintln(filterSubclones(resultClones));
 	
+	//iprintln(filterSubclones(resultClones));
+	
 	//values = { resultClones[cl] | cl <- resultClones };
 	//for(val <- values){
 	//	println(val);

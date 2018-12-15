@@ -126,14 +126,17 @@ public node normalizeNodeDec(node ast) {
 }
 
 str removeLocFromString(str input){
+	
 	input = visit(input){ 
-		case /([|])(?:(?=(\\?))\2.)*?\1/ => ""
-		
+		case /([|](.*?)[|])([\(](.*?)[\)])|([|](.*?)[|])/ => ""
+		//case /([|](.*?)[|])/ => ""
 	}
 	
-	//input = visit(input){
-	//	case /(?\<=\()(.*?)(?=\))/ => ""
+	//input = visit(input){ 
+	//	//case /([|](.*?)[|])([\(](.*?)[\)])|([|](.*?)[|])/ => ""
+	//	case /([\(](.*?)[\)])/ => ""
 	//}
+	
 	
 	return input;
 }
