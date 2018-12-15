@@ -92,3 +92,5 @@ bin
 *.log
 *.swp
 *.bak
+
+node_modules/
