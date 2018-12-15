@@ -14,15 +14,18 @@ import Comparison;
 import Prelude;
 import Map;
 import Set;
+import Writer;
 
 
 // Own modules
 import utils::HelperFunctions;
 
-//loc project = |project://SimpleJava|;
-loc project = |project://smallsql0.21_src|;
+loc project = |project://SimpleJava|;
+//loc project = |project://smallsql0.21_src|;
 // loc project = |project://src|; // <------ project://hsqldb-2.3.1, 
                                   // but only the src folder as specified in the assignment documentation
+
+loc csvDestination = |project://series2/src/data.csv|;
 
 void Main() {
 	//list[str] lines = getLinesOfCode(project);
@@ -55,13 +58,15 @@ void Main() {
 		counter += 1;
 	}
 	
-	iprintln(filterSubclones(resultClones));
+	resultClones = filterSubclones(resultClones);
+	values = [ resultClones[cl] | cl <- resultClones ];
+	OutputData(values, csvDestination);
+	
 	
 	//iprintln(filterSubclones(resultClones));
 	
-	//values = { resultClones[cl] | cl <- resultClones };
-	//for(val <- values){
-	//	println(val);
+	//for(keys <- resultClones){
+	//	println(
 	//}
 	
 	
@@ -79,7 +84,7 @@ map[int, list[node]] Preprocess2(set[Declaration] asts){
 				if(("src" in getKeywordParameters(n))){
 					int nn = countNodes(n);
 					
-					if(nn > 25){
+					if(nn > 2){
 						if(nn in buckets){
 							buckets[nn] += n;
 						}else{
