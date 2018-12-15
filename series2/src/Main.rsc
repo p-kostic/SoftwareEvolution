@@ -13,12 +13,13 @@ import lang::java::jdt::m3::AST;
 import Comparison;
 import Prelude;
 import Map;
+import Set;
 
 
 // Own modules
 import utils::HelperFunctions;
 
-// loc project = |project://SimpleJava|;
+//loc project = |project://SimpleJava|;
 loc project = |project://smallsql0.21_src|;
 // loc project = |project://src|; // <------ project://hsqldb-2.3.1, 
                                   // but only the src folder as specified in the assignment documentation
@@ -44,15 +45,24 @@ void Main() {
 	list[int] dist = [size(buckets[a]) | a <- buckets];
 	iprintln(dist);
 	
-	rel[loc,loc] result = {};
+	map[node, set[loc]] resultClones = ();
 	int s = size(buckets);
 	int counter = 0;
 	for(i <- [(size(keys) - 1)..-1]){
 		Duration runningTime = createDuration(begin,now());
 		println("<counter>/<s> with size <size(buckets[keys[i]])> and time <toString(runningTime.minutes)>:<(runningTime.seconds)>");
-		result += CompareBucket(buckets[keys[i]], result);
+		resultClones = CompareBucket(buckets[keys[i]], resultClones);
 		counter += 1;
 	}
+	
+	iprintln(filterSubclones(resultClones));
+	
+	//values = { resultClones[cl] | cl <- resultClones };
+	//for(val <- values){
+	//	println(val);
+	//}
+	
+	
 }
 
 // TODO:
@@ -83,36 +93,39 @@ map[int, list[node]] Preprocess2(set[Declaration] asts){
 	return buckets;
 }
 
-// Buckets of sub trees
-list[map[node,node]] Preprocess(set[Declaration] asts) {
-	
-	int totalNodes = 0;
-	for (ast <- asts) {
-		totalNodes += countNodes(ast);	
-	}
-	
-	// 10% of average max subtree mass buckets
-	int bucketThreshold = toInt(totalNodes / size(asts) * 0.1); 
-	//int bucketThreshold = 1;
-	list[map[node, node]] result = [() | s <- [1..bucketThreshold + 1] ];
-	
-	//bucketThreshold = 5;
-	for (ast <- asts) {
-		visit(ast) {
-			case node n: {
-				if(("src" in getKeywordParameters(n))){
-					int nn = countNodes(n);
-					
-					// Ignore small subtrees and check if the node has a source location
-					if(nn > 2){
-						int index = nn % bucketThreshold;
-						result[index] = result[index] + (n:n);					
-					}	
-				}
+map[node, set[loc]] filterSubclones(map[node, set[loc]] clones){
+	for(a <- clones){
+		bool subClone = false;
+		loc testLoc = takeOneFrom(clones[a])[0];
+		
+		
+		
+		
+		for(b <- clones){
+			if(a == b){continue;}
+			
+			for(l <- clones[b]){
+				subClone = subClone || betweenLocSameFile(l, testLoc);
 			}
 		}
+		
+		if(subClone){
+			println("delete die man");
+			clones = delete(clones, a);
+		}
 	}
-	return result;
+	
+	return clones;
+}
+
+// True if l2 inbetween l1 for the same file
+bool betweenLocSameFile(loc l1, loc l2) {
+	// Between
+	if (l1.path == l2.path) {
+		if (l1.begin.line <= l2.begin.line && l1.end.line >= l2.end.line)
+			return true;
+	}
+	return false;
 }
 
 int countNodes(node ast) {

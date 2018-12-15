@@ -11,7 +11,7 @@ import lang::java::jdt::m3::AST;
 import util::Math;
 import List;
 
-set[tuple[loc,loc]] CompareBucket(list[node] bucket, rel[loc,loc] clones){
+map[node, set[loc]] CompareBucket(list[node] bucket, map[node, set[loc]] clones){
 	//println("Started bucket comparison");
 	lrel[node,node] reflexiveClosure = bucket * bucket;
 	lrel[node,node] relation = [];
@@ -22,26 +22,24 @@ set[tuple[loc,loc]] CompareBucket(list[node] bucket, rel[loc,loc] clones){
 		}
 	}
 	
-	result = {};
+	map[node, set[loc]] result = ();
 	for(<n1, n2> <- relation){
-		if (!checkSubclones(n1.src, n2.src, clones)) {
-			sim = similarity(n1, n1.src, n2, n2.src);
-			if(sim[2] > 0.99){
-				result += <sim[0], sim[1]>;		
-			}
+		sim = similarity(n1, n1.src, n2, n2.src);
+		if(sim[2] > 0.99){
+			// Add clone tuple to clone class
+			if(n1 in clones){
+				clones[n1] += { sim[0], sim[1] };
+			}else{
+				clones += (n1 : { sim[0], sim[1] });
+			}		
 		}
 	}
 	
-	for(sim <- result){
-		println(sim);
-		
-	}
-	
-	return result;
-	//println("Converted bucket to relation");
+	return clones;
 }
 
-bool checkSubclones(loc l1, loc l2, rel[loc,loc] clones){
+
+bool checkSubclones(loc l1, loc l2, set[loc] clones){
 	for(<a1,a2> <- clones){
 		return (betweenLocSameFile(a1, l1) && betweenLocSameFile(a2, l2)) 
 		|| (betweenLocSameFile(a1, l2) && betweenLocSameFile(a2, l1));
@@ -49,15 +47,7 @@ bool checkSubclones(loc l1, loc l2, rel[loc,loc] clones){
 	return false;
 }
 
-// True if l2 inbetween l1 for the same file
-bool betweenLocSameFile(loc l1, loc l2) {
-	// Between
-	if (l1.path == l2.path) {
-		if (l1.begin.line <= l2.begin.line && l1.end.line >= l2.end.line)
-			return true;
-	}
-	return false;
-}
+
 
 
 tuple[loc, loc, real] similarity(node tree1, loc l1, node tree2, loc l2) {
@@ -67,6 +57,7 @@ tuple[loc, loc, real] similarity(node tree1, loc l1, node tree2, loc l2) {
 	// We can calculate similarity scores from there
 	list[str] t1 = [];
 	list[str] t2 = [];
+	
 	
 	visit(tree1) {
 		case node x: {
@@ -140,9 +131,9 @@ str removeLocFromString(str input){
 		
 	}
 	
-	input = visit(input){
-		case /(?\<=\()(.*?)(?=\))/ => ""
-	}
+	//input = visit(input){
+	//	case /(?\<=\()(.*?)(?=\))/ => ""
+	//}
 	
 	return input;
 }
