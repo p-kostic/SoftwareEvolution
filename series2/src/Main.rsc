@@ -20,8 +20,8 @@ import Writer;
 // Own modules
 import utils::HelperFunctions;
 
-loc project = |project://SimpleJava|;
-//loc project = |project://smallsql0.21_src|;
+//loc project = |project://SimpleJava|;
+loc project = |project://smallsql0.21_src|;
 // loc project = |project://src|; // <------ project://hsqldb-2.3.1, 
                                   // but only the src folder as specified in the assignment documentation
 
@@ -56,19 +56,20 @@ void Main() {
 		println("<counter>/<s> with size <size(buckets[keys[i]])> and time <toString(runningTime.minutes)>:<(runningTime.seconds)>");
 		resultClones = CompareBucket(buckets[keys[i]], resultClones);
 		counter += 1;
+		
+		if(size(resultClones) == 10){
+			break;
+		}
 	}
 	
+	println("Start filtering subclones");
 	resultClones = filterSubclones(resultClones);
+	println("End filtering");
+	
+	println("Start Writing");
 	values = [ resultClones[cl] | cl <- resultClones ];
 	OutputData(values, csvDestination);
-	
-	
-	//iprintln(filterSubclones(resultClones));
-	
-	//for(keys <- resultClones){
-	//	println(
-	//}
-	
+	println("End Writing");
 	
 }
 
@@ -101,6 +102,7 @@ map[int, list[node]] Preprocess2(set[Declaration] asts){
 }
 
 map[node, set[loc]] filterSubclones(map[node, set[loc]] clones){
+	int i = 0;
 	for(a <- clones){
 		bool subClone = false;
 		loc testLoc = takeOneFrom(clones[a])[0];
@@ -117,11 +119,11 @@ map[node, set[loc]] filterSubclones(map[node, set[loc]] clones){
 		}
 		
 		if(subClone){
-			println("delete die man");
+			i += 1;
 			clones = delete(clones, a);
 		}
 	}
-	
+	println("<i> clones filtered");
 	return clones;
 }
 
