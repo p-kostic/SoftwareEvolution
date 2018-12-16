@@ -1,3 +1,4 @@
-id,path,beginLine,beginColumn,endLine,endColumn
-0,/src/Test.java,2,1,2,24
-0,/src/Program.java,2,1,2,24
+id,parent,parentbeginLine,beginColumn,endLine,endColumn,CCid
+/src/,,1,1,1,1,0
+Test.java,/src/, 2,1,2,24,0
+Program.java,/src/,2,1,2,24,0

@@ -27,7 +27,8 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: "Clone Visualisation",
             filename: "index.html",
-            favicon: './favicon.ico'
+            favicon: './favicon.ico',
+            template: './src/index.html',
         })
     ]
 };
