@@ -3,8 +3,7 @@ export interface CloneClass {
 }
 
 export interface Location {
-    file: string;
+    path: string;
     startLocation: [number, number];
     endLocation: [number, number];
 }
-

@@ -1,28 +1,38 @@
 {
-  "name": "vue-d3-poc",
-  "version": "0.1.0",
+  "name": "series2-visualisation",
+  "version": "1.0.0",
+  "description": "Software Evolution: Series 2, Visualisation",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "start": "npx webpack-dev-server --open --mode=development",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "dependencies": {
-    "d3": "^5.5.0",
-    "tween.js": "^16.3.5",
-    "vue": "^2.5.16",
-    "vue-class-component": "^6.0.0",
-    "vue-property-decorator": "^6.0.0"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/p-kostic/SoftwareEvolution.git"
   },
+  "keywords": [
+    "d3",
+    "d3js",
+    "typescript",
+    "javascript"
+  ],
+  "author": "Petar Kostic <petarkostic1995@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/p-kostic/SoftwareEvolution/issues"
+  },
+  "homepage": "https://github.com/p-kostic/SoftwareEvolution#readme",
   "devDependencies": {
     "@types/d3": "^5.0.0",
-    "@vue/cli-plugin-typescript": "^3.0.0-beta.15",
-    "@vue/cli-service": "^3.0.0-beta.15",
-    "vue-template-compiler": "^2.5.16"
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
-  ]
+    "@types/jquery": "^3.3.6",
+    "d3": "^5.7.0",
+    "html-webpack-plugin": "^3.2.0",
+    "jquery": "^3.3.1",
+    "ts-loader": "^4.5.0",
+    "typescript": "^3.0.3",
+    "webpack": "^4.17.1",
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.7"
+  }
 }
