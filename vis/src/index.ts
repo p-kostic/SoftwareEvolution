@@ -8,12 +8,9 @@ let height = 960;
 let svg = d3.select("body").append("svg")
             .attr("width", "100%")
             .attr("height",960)
-            .style('background',"LightGray")
+            .style('background',"white")
             .append("g")
             .attr('transform','translate(1,1)'); // set to the center
-
-var color = d3.scaleSequential(d3.interpolateMagma)
-            .domain([-4, 4]);
 
 var format = d3.format(",d");
 
@@ -28,17 +25,24 @@ var pack = d3.pack()
 // Can only be used in promise. Thus, it dictates program flow
 d3.csv('./data.csv').then(data => {
     console.log(data);
+    
+    let classes: number[] = <any[]>data.map(x => x["CCid"]);
+    
+    var color = d3.scaleSequential(d3.interpolateBlues)
+    .domain([0, Math.max(...classes)]);
+
+    console.log("color array", color(0));
 
     const root = stratify(data)
-                 .sum((d: any) => d['CCId'])
-                 .sort(function(a: any,b: any) { return b['CCId'] - a["CCId"]});
+                 .sum((d: any) => d['order'])
+                 .sort(function(a: any,b: any) { return b['order'] - a["order"]});
     
     const test = pack(root);
 
     var node = svg.selectAll("g")
     .data(root.descendants())
     .enter().append("g")
-      .attr("transform", function(d: any) { console.log("TRANSFORM", d);return "translate(" + d.x + "," + d.y + ")"; })
+      .attr("transform", function(d: any) { console.log("TRANSFORM", d); return "translate(" + d.x + "," + d.y + ")"; })
       .attr("class", function(d) { return "node" + (!d.children ? " node--leaf" : d.depth ? "" : " node--root"); })
       .each(function(d: any) { d.node = this; })
       .on("mouseover", hovered(true))
@@ -51,7 +55,7 @@ d3.csv('./data.csv').then(data => {
 
     node.append("circle")
         .attr("id", function(d: any) { return "node-" + d.id; })
-        .attr("r", function(d: any) { return 100; })
+        .attr("r", function(d: any) { return d.r; })
         .style("fill", function(d: any) { return color(d.depth); });
 
     var leaf = node.filter(function(d) { return !d.children; });
@@ -64,14 +68,12 @@ d3.csv('./data.csv').then(data => {
     leaf.append("text")
         .attr("clip-path", function(d) { return "url(#clip-" + d.id + ")"; })
     .selectAll("tspan")
-    .data(function(d: any) { return d.id.substring(d.id.lastIndexOf(".") + 1).split(/(?=[A-Z][^A-Z])/g); })
+    .data(function(d: any) { return d.id; })
     .enter().append("tspan")
-        .attr("x", 0)
-        .attr("y", function(d, i, nodes) { return 13 + (i - nodes.length / 2 - 0.5) * 10; })
         .text(function(d: any) { return d; });
 
     node.append("title")
-        .text(function(d: any) { return d.id + "\n" + format(d["CCId"]); });
+        .text(function(d: any) { return d.id; });
 });
 
 function hovered(hover: any) {
