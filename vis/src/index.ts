@@ -1,6 +1,7 @@
 // import * as $ from "jquery";
 import * as d3 from "d3";
 import {Location, CloneClass} from "./CloneClass";
+import { BehaviorSubject } from 'rxjs';
 
 let width = 960;
 let height = 960;
@@ -20,6 +21,8 @@ const stratify = d3.stratify()
 var pack = d3.pack()
              .size([width - 2, height - 2])
              .padding(3);
+
+const subject: BehaviorSubject<number> = new BehaviorSubject<number>(-1);
 
 // Get data from csv file and call functions from promise. 
 // Can only be used in promise. Thus, it dictates program flow
@@ -45,13 +48,27 @@ d3.csv('./data.csv').then(data => {
       .attr("transform", function(d: any) { console.log("TRANSFORM", d); return "translate(" + d.x + "," + d.y + ")"; })
       .attr("class", function(d) { return "node" + (!d.children ? " node--leaf" : d.depth ? "" : " node--root"); })
       .each(function(d: any) { d.node = this; })
-      .on("mouseover", hovered(true))
-      .on("mouseout", hovered(false));
+      .on("mouseover", x => subject.next((<any>(x.data)).CCid))
+      .on("mouseout", () => subject.next(-1));
 
       console.log("Node", node);
       console.log("root", root);
       console.log("packed root", test);
       console.log(root.descendants());
+
+    // node.each(x => {
+    //     let current = this;
+    //     subject.subscribe(y => d3.select(current).style("fill", "black"));
+    // });// (<any>x).node.classed("node--hover", true)));
+
+    subject.subscribe(x => {
+        if(x != -1){
+            svg. selectAll("g").filter(y => ((<any>y).data).CCid == x).select("circle").style("stroke", "red");
+        }
+        svg.selectAll("g").filter(y => ((<any>y).data).CCid != x).select("circle").style("stroke", "");//function(d: any) { return color(d.depth); })
+    });
+    
+
 
     node.append("circle")
         .attr("id", function(d: any) { return "node-" + d.id; })
