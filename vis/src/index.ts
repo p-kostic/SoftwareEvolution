@@ -1,6 +1,5 @@
 // import * as $ from "jquery";
 import * as d3 from "d3";
-import {Location, CloneClass} from "./CloneClass";
 
 let width = 960;
 let height = 960;
