@@ -32,7 +32,7 @@ d3.csv('./data.csv').then(data => {
     let classes: number[] = <any[]>data.map(x => x["CCid"]);
     
     var color = d3.scaleSequential(d3.interpolateBlues)
-    .domain([0, Math.max(...classes)]);
+    .domain([0, 6]);
 
     console.log("color array", color(0));
 
