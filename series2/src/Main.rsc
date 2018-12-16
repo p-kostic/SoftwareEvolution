@@ -57,9 +57,6 @@ void Main() {
 		resultClones = CompareBucket(buckets[keys[i]], resultClones);
 		counter += 1;
 		
-		if(size(resultClones) == 10){
-			break;
-		}
 	}
 	
 	println("Start filtering subclones");
@@ -85,7 +82,7 @@ map[int, list[node]] Preprocess2(set[Declaration] asts){
 				if(("src" in getKeywordParameters(n))){
 					int nn = countNodes(n);
 					
-					if(nn > 2){
+					if(nn > 25){
 						if(nn in buckets){
 							buckets[nn] += n;
 						}else{

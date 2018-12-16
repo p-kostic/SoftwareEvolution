@@ -1,6 +1,7 @@
 module Writer
 import lang::csv::IO;
 import Prelude;
+import util::Math;
 
 void OutputData(list[set[loc]] classes, loc destination){
 //	id,parent,parent,beginLine,beginColumn,endLine,endColumn,CCid
@@ -13,6 +14,7 @@ void OutputData(list[set[loc]] classes, loc destination){
 	for(class <- classes){
 		for(l <- class){
 			list[str] pathSegments = [s | s <- split("/", l.path), s != ""];
+			pathSegments = pathSegments + [toString(l.begin.line)];
 			println(pathSegments);
 			result += GetHierarchy(pathSegments);
 			
