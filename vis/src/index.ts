@@ -2,14 +2,13 @@
 import * as d3 from "d3";
 import {Location, CloneClass} from "./CloneClass";
 
-// const fontFamily: string = "\"Lucida Sans Unicode\", \"Lucida Sans Grande\", \"Trebuchet MS\", Tahoma, Arial, Helvetica, sans-serif";
-
 let width = 300;
 let height = 200;
 
 // Create root SVG element
 d3.select("body").append("div").text("Joren is Lelijk").attr("style", "color:red").classed("newclass", true);
-d3.select("body").append("div").text("Deze meme is gemaakt door de Petar-bende");
+d3.select("body").append("div").text("Deze meme is gemaakt door de Petar-bende, check ook ff die favicon lmao");
+
 d3.select("body").append("svg")
          .attr("width", "100%")
          .attr("height",960)
