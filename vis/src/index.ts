@@ -50,16 +50,6 @@ d3.csv('./data.csv').then(data => {
       .on("mouseover", x => subject.next((<any>(x.data)).CCid))
       .on("mouseout", () => subject.next(-1));
 
-      console.log("Node", node);
-      console.log("root", root);
-      console.log("packed root", test);
-      console.log(root.descendants());
-
-    // node.each(x => {
-    //     let current = this;
-    //     subject.subscribe(y => d3.select(current).style("fill", "black"));
-    // });// (<any>x).node.classed("node--hover", true)));
-
     subject.subscribe(x => {
         if(x != -1){
             svg. selectAll("g").filter(y => ((<any>y).data).CCid == x).select("circle").style("stroke", "red");
@@ -67,8 +57,6 @@ d3.csv('./data.csv').then(data => {
         svg.selectAll("g").filter(y => ((<any>y).data).CCid != x).select("circle").style("stroke", "");//function(d: any) { return color(d.depth); })
     });
     
-
-
     node.append("circle")
         .attr("id", function(d: any) { return "node-" + d.id; })
         .attr("r", function(d: any) { return d.r; })
@@ -91,9 +79,3 @@ d3.csv('./data.csv').then(data => {
     node.append("title")
         .text(function(d: any) { return d.id; });
 });
-
-function hovered(hover: any) {
-    return function(d: any) {
-      d3.selectAll(d.ancestors().map(function(d: any) { return d.node; })).classed("node--hover", hover);
-    };
-  }
