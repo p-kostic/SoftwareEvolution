@@ -25,11 +25,6 @@ var pack = d3.pack()
 
 const subject: BehaviorSubject<number> = new BehaviorSubject<number>(-1);
 
-let root;
-var r = 720,
-    x = d3.scaleLinear().range([0,r]),
-    y = d3.scaleLinear().range([0, r]);
-
 // Get data from csv file and call functions from promise. 
 // Can only be used in promise. Thus, it dictates program flow
 d3.csv('./data.csv').then(data => {
@@ -47,7 +42,9 @@ d3.csv('./data.csv').then(data => {
     var color = d3.scaleSequential(d3.interpolateBlues)
     .domain([0, 6]);
 
-    root = stratify(data)
+    console.log("color array", color(0));
+
+    const root = stratify(data)
                  .sum((d: any) => d['order'])
                  .sort(function(a: any,b: any) { return b['order'] - a["order"]});
     
@@ -56,16 +53,11 @@ d3.csv('./data.csv').then(data => {
     var node = svg.selectAll("g")
     .data(root.descendants())
     .enter().append("g")
-      .attr("transform", function(d: any) { return "translate(" + d.x + "," + d.y + ")"; })
-      .attr("class", function(d: any) { return "node" + (!d.children ? " node--leaf" : d.depth ? "" : " node--root"); })
-      .each(function(d: any) { d.node = (<any>this); })
-      .on("mouseover", (x: any) => subject.next((<any>(x.data)).CCid))
+      .attr("transform", function(d: any) { console.log("TRANSFORM", d); return "translate(" + d.x + "," + d.y + ")"; })
+      .attr("class", function(d) { return "node" + (!d.children ? " node--leaf" : d.depth ? "" : " node--root"); })
+      .each(function(d: any) { d.node = this; })
+      .on("mouseover", x => subject.next((<any>(x.data)).CCid))
       .on("mouseout", () => subject.next(-1));
-
-    // node.each(x => {
-    //     let current = this;
-    //     subject.subscribe(y => d3.select(current).style("fill", "black"));
-    // });// (<any>x).node.classed("node--hover", true)));
 
     subject.subscribe(x => {
         if(x != -1){
@@ -74,60 +66,28 @@ d3.csv('./data.csv').then(data => {
         svg.selectAll("g").filter(y => ((<any>y).data).CCid != x).select("circle").style("stroke", "");//function(d: any) { return color(d.depth); })
     });
     
-    // d3.select(window).on("click", function() { zoom(root); });
-
     node.append("circle")
         .attr("id", function(d: any) { return "node-" + d.id; })
         .attr("r", function(d: any) { return d.r; })
-        .style("fill", function(d: any) { return color(d.depth); })
-        // .on("click", function(d: any) { return zoom(node == d ? root : d); });
+        .style("fill", function(d: any) { return color(d.depth); });
 
-    var leaf = node.filter(function(d:any) { return !d.children; });
+    var leaf = node.filter(function(d) { return !d.children; });
 
     leaf.append("clipPath")
-        .attr("id", function(d:any) { return "clip-" + d.id; })
-        .append("use")
-        .attr("xlink:href", function(d:any) { return "#node-" + d.id + ""; });
+        .attr("id", function(d) { return "clip-" + d.id; })
+    .append("use")
+        .attr("xlink:href", function(d) { return "#node-" + d.id + ""; });
 
     leaf.append("text")
-        .attr("clip-path", function(d:any) { return "url(#clip-" + d.id + ")"; })
-        .selectAll("tspan")
-        .data(function(d: any) { return d.id; })
-        .enter().append("tspan")
+        .attr("clip-path", function(d) { return "url(#clip-" + d.id + ")"; })
+    .selectAll("tspan")
+    .data(function(d: any) { return d.id; })
+    .enter().append("tspan")
         .text(function(d: any) { return d; });
 
     node.append("title")
         .text(function(d: any) { return d.id; });
 });
-
-function zoom(d: any) {
-    var k = r / d.r / 2;
-    x.domain([d.x - d.r, d.x + d.r]);
-    y.domain([d.y - d.r, d.y + d.r]);
-  
-    var t = svg.transition()
-        .duration(d3.event.altKey ? 7500 : 750);
-  
-    t.selectAll("circle")
-        .attr("cx", function(d:any) { return x(d.x); })
-        .attr("cy", function(d:any) { return y(d.y); })
-        .attr("r", function(d:any) { return k * d.r; });
-
-    t.selectAll("text")
-        .attr("x", function(d: any) { return x(d.x); })
-        .attr("y", function(d: any) { return y(d.y); })
-        .style("opacity", function(d: any) { return k * d.r > 20 ? 1 : 0; });
-  
-    root = d;
-    d3.event.stopPropagation();
-  }
-
-function hovered(hover: any) {
-    return function(d: any) {
-      d3.selectAll(d.ancestors().map(function(d: any) { return d.node; })).classed("node--hover", hover);
-    };
-  }
-
 
 function requestData(): Promise<GithubFile>{
     return new Promise((resolve, reject) => {
