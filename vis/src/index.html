@@ -1,15 +1,22 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <style>
-
     text {
-    font: 10px sans-serif;
-    text-anchor: middle;
+        font: 10px sans-serif;
+        text-anchor: middle;
     }
 
     .node--hover circle {
-    stroke: #000;
-    stroke-width: 1.2px;
+        stroke: #000;
+        stroke-width: 1.2px;
+    }
+
+    .node {
+        cursor: pointer;
+    }
+
+    .node--leaf {
+        fill: white;
     }
 
     .selected{
@@ -17,16 +24,18 @@
         stroke: #000;
         background-color: black;
     }
+
+    .label {
+        font: 11px "Helvetica Neue", Helvetica, Arial, sans-serif;
+        text-anchor: middle;
+        text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff, 0 -1px 0 #fff;
+    }
 </style>
 <head>
         <link rel="stylesheet" type="text/css" href="./styles/github.css">
 </head>
 <body>
-
-
-
-
-<div id="codeViewer">
-
-</div>    
+    <svg width="960" height="960"></svg>
+    <div id="codeViewer">
+    </div>    
 </body>

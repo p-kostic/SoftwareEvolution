@@ -2,26 +2,22 @@
 import * as d3 from "d3";
 import { BehaviorSubject } from 'rxjs';
 import * as marked from 'marked';
-import * as highlight from 'highlight.js'
+import * as highlight from 'highlight.js';
 
-let width = 960;
-let height = 960;
+let svg = d3.select("svg"),
+          margin = 100,
+          diameter = +svg.attr("width"),
+          g = svg.append("g").attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ")");
 
-let svg = d3.select("body").append("svg")
-            .attr("width", "100%")
-            .attr("height",960)
-            .style('background',"white")
-            .append("g")
-            .attr('transform','translate(1,1)'); // set to the center
-
-var format = d3.format(",d");
+var color = d3.scaleSequential(d3.interpolateBlues)
+.domain([0, 4]);
 
 const stratify = d3.stratify()
                    .id((d: any) => d['id'] )
                    .parentId((d: any) => {return d['parent']; });
 var pack = d3.pack()
-             .size([width - 2, height - 2])
-             .padding(3);
+             .size([diameter - margin, diameter - margin])
+             .padding(2);
 
 const subject: BehaviorSubject<number> = new BehaviorSubject<number>(-1);
 
@@ -36,57 +32,76 @@ d3.csv('./data.csv').then(data => {
             codeViewer.html(marked("```javascript \n" + x.lines + "```", {highlight: (c, lang) => { return highlight.highlightAuto(c).value; }}));//highlight.highlight("java", c).value }});
         }   
     });
-
-    let classes: number[] = <any[]>data.map(x => x["CCid"]);
-    
-    var color = d3.scaleSequential(d3.interpolateBlues)
-    .domain([0, 6]);
-
-    console.log("color array", color(0));
-
+  
     const root = stratify(data)
                  .sum((d: any) => d['order'])
                  .sort(function(a: any,b: any) { return b['order'] - a["order"]});
     
-    const test = pack(root);
+    let focus = root, 
+        nodes = pack(root).descendants(),
+        view
 
-    var node = svg.selectAll("g")
-    .data(root.descendants())
-    .enter().append("g")
-      .attr("transform", function(d: any) { console.log("TRANSFORM", d); return "translate(" + d.x + "," + d.y + ")"; })
-      .attr("class", function(d) { return "node" + (!d.children ? " node--leaf" : d.depth ? "" : " node--root"); })
-      .each(function(d: any) { d.node = this; })
-      .on("mouseover", x => subject.next((<any>(x.data)).CCid))
-      .on("mouseout", () => subject.next(-1));
+    var circle = g.selectAll("circle")
+                  .data(nodes)
+                  .enter().append("circle")
+                    .style("fill", function(d) { return color(d.depth) })
+                    .attr("class", function(d) { return "node" + (!d.children ? " node--leaf" : d.depth ? "" : " node--root"); })
+                    .on("mouseover", (x: any) => subject.next(x.data.CCid) )
+                    .on("mouseout", () => subject.next(-1))
+                    .on("click", function(d) { 
+                        if (focus !== d && d.children) 
+                          zoom(d),
+                          d3.event.stopPropagation();
+                        
+                    });
 
-    subject.subscribe(x => {
-        if(x != -1){
-            svg. selectAll("g").filter(y => ((<any>y).data).CCid == x).select("circle").style("stroke", "red");
-        }
-        svg.selectAll("g").filter(y => ((<any>y).data).CCid != x).select("circle").style("stroke", "");//function(d: any) { return color(d.depth); })
-    });
+    var text = g.selectAll("text")
+    .data(nodes)
+    .enter().append("text")
+      .attr("class", "label")
+      .style("fill-opacity", function(d: any) { return d.parent === root ? 1 : 0; })
+      .style("display", function(d: any) { return d.parent === root ? "inline" : "none"; })
+      .text(function(d: any) { return d.data.id; })
     
-    node.append("circle")
-        .attr("id", function(d: any) { return "node-" + d.id; })
-        .attr("r", function(d: any) { return d.r; })
-        .style("fill", function(d: any) { return color(d.depth); });
+    var node = g.selectAll("circle,text");
 
-    var leaf = node.filter(function(d) { return !d.children; });
+    svg.style("background", color(-1));
+       //.on("click", function() { zoom(root); });
 
-    leaf.append("clipPath")
-        .attr("id", function(d) { return "clip-" + d.id; })
-    .append("use")
-        .attr("xlink:href", function(d) { return "#node-" + d.id + ""; });
+    zoomTo([(<any>root).x, (<any>root).y, (<any>root).r * 2 + margin]);
 
-    leaf.append("text")
-        .attr("clip-path", function(d) { return "url(#clip-" + d.id + ")"; })
-    .selectAll("tspan")
-    .data(function(d: any) { return d.id; })
-    .enter().append("tspan")
-        .text(function(d: any) { return d; });
+    // CLONE STROKES
+    subject.subscribe(x => {
+      console.log(x);
+      if(x != -1){
+          svg. selectAll("circle").filter((y: any) => y.data.CCid == x).style("stroke", "red");
+      }
+      svg.selectAll("circle").filter((y: any) => y.data.CCid != x).style("stroke", "");
+    });
 
-    node.append("title")
-        .text(function(d: any) { return d.id; });
+    // ZOOMING
+    function zoom(d) {
+      var focus0 = focus; focus = d;
+  
+      var transition = d3.transition()
+          .duration(d3.event.altKey ? 7500 : 750)
+          .tween("zoom", function(d: any) {
+            var i = d3.interpolateZoom(view, [(<any>focus).x, (<any>focus).y, (<any>focus).r * 2 + margin]);
+            return function(t) { zoomTo(i(t)); };
+          });
+      
+      transition.selectAll("text")
+        .filter(function(d:any) { return d.parent === focus || (<any>this).style.display === "inline"; })
+        .style("fill-opacity", function(d: any) { return d.parent === focus ? 1 : 0; })
+        .on("start", function(d:any) { if (d.parent === focus) (<any>this).style.display = "inline"; })
+        .on("end", function(d:any) { if (d.parent !== focus) (<any>this).style.display = "none"; });
+    }
+    
+    function zoomTo(v: any) {
+      var k = diameter / v[2]; view = v;
+      node.attr("transform", function(d: any) { return "translate(" + (d.x - v[0]) * k + "," + (d.y - v[1]) * k + ")"; });
+      circle.attr("r", function(d: any) { return d.r * k; });
+    }
 });
 
 function requestData(): Promise<GithubFile>{

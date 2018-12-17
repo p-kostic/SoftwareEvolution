@@ -11,7 +11,7 @@
     // "noUnusedLocals": true,
     // "noUnusedParameters": true,
     "rootDir": "./",
-    "strictNullChecks": true,
+    "strictNullChecks": false,
     "target": "ES2018",
   },
   "include": [
