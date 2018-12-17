@@ -27,11 +27,6 @@ d3.csv('./data.csv').then(data => {
     const codeViewer = d3.select("body").append("div").attr("id", "codeViewer");
     const htmlObject = document.getElementById("codeViewer");
 
-    requestData().then(x => {     
-        if(codeViewer != null){
-            codeViewer.html(marked("```javascript \n" + x.lines + "```", {highlight: (c, lang) => { return highlight.highlightAuto(c).value; }}));//highlight.highlight("java", c).value }});
-        }   
-    });
   
     const root = stratify(data)
                  .sum((d: any) => d['order'])
@@ -52,7 +47,13 @@ d3.csv('./data.csv').then(data => {
                         if (focus !== d && d.children) 
                           zoom(d),
                           d3.event.stopPropagation();
-                        
+                          if(((<any>d).data).CCid != -1){
+                              requestData(((<any>d).data).fullPath, ((<any>d).data).beginLine, ((<any>d).data.endLine)).then(x => {     
+                                if(codeViewer != null){
+                                    codeViewer.html(marked("```javascript \n" + x.lines + "```", {highlight: (c, lang) => { return highlight.highlightAuto(c).value; }}));//highlight.highlight("java", c).value }});
+                                }   
+                            });
+                          }
                     });
 
     var text = g.selectAll("text")
@@ -72,7 +73,7 @@ d3.csv('./data.csv').then(data => {
 
     // CLONE STROKES
     subject.subscribe(x => {
-      console.log(x);
+    //   console.log(x);
       if(x != -1){
           svg. selectAll("circle").filter((y: any) => y.data.CCid == x).style("stroke", "red");
       }
@@ -104,15 +105,28 @@ d3.csv('./data.csv').then(data => {
     }
 });
 
-function requestData(): Promise<GithubFile>{
+function requestData(path: string, beginLine: number, endLine: number): Promise<GithubFile>{
+    console.log(beginLine + " : " + endLine)
+    
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
-        xhr.open("GET", "https://api.github.com/repos/p-kostic/SoftwareEvolution/contents/smallsql0.21_src/src/smallsql/junit/AllTests.java#L10-L20", true);
+        xhr.open("GET", "https://api.github.com/repos/p-kostic/SoftwareEvolution/contents/smallsql0.21_src/" + path.substr(1), true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onreadystatechange = () => { 
             if(xhr.readyState == XMLHttpRequest.DONE){
                 const response = JSON.parse(xhr.responseText);
-                const f: GithubFile = { lines: atob(response.content) }
+                const lines = atob(response.content).split('\n');
+                const filteredLines: string[] = [];
+                
+                // Only retrieve lines that are in the copy range
+                let i = 0;
+                for(i = 0; i < lines.length; i++ ){
+                    if(i >= beginLine && i <= endLine){
+                        filteredLines.push(lines[i]);
+                    }
+                }
+
+                const f: GithubFile = { lines: filteredLines.join("\n") }
                 resolve(f);
             }
         }

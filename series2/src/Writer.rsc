@@ -9,7 +9,7 @@ void OutputData(list[set[loc]] classes, loc destination){
 //	Test.java,/src/, 2,1,2,24,0
 //	Program.java,/src/,2,1,2,24,0
 	
-	rel[int order, str id, str parent, int beginLine, int beginColumn, int endLine, int endColumn, int CCid] result = {};
+	rel[int order, str id, str parent, int beginLine, int beginColumn, int endLine, int endColumn, str fullPath, int CCid] result = {};
 	int i = 0;
 	for(class <- classes){
 		for(l <- class){
@@ -21,7 +21,7 @@ void OutputData(list[set[loc]] classes, loc destination){
 			str id = pathSegments[size(pathSegments) - 1];
 			str parent = pathSegments[size(pathSegments) - 2];
 			
-			result += <size(pathSegments) - 1, id, parent, l.begin.line, l.begin.column, l.end.line, l.end.column, i>;
+			result += <size(pathSegments) - 1, id, parent, l.begin.line, l.begin.column, l.end.line, l.end.column, l.path, i>;
 		}
 		i += 1;
 	}
@@ -29,14 +29,20 @@ void OutputData(list[set[loc]] classes, loc destination){
 	writeCSV(result, destination);
 }
 
-rel[int order, str id, str parent, int beginLine, int beginColumn, int endLine, int endColumn, int CCid] GetHierarchy(list[str] pathSegments){
-	rel[int order, str id, str parent, int beginLine, int beginColumn, int endLine, int endColumn, int CCid] result = {};
+rel[int order, str id, str parent, int beginLine, int beginColumn, int endLine, int endColumn, str fullPath, int CCid] GetHierarchy(list[str] pathSegments){
+	rel[int order, str id, str parent, int beginLine, int beginColumn, int endLine, int endColumn, str fullPath, int CCid] result = {};
 	
 	for(int i <- [(size(pathSegments) - 2)..0]){
-		tup = <i, pathSegments[i], pathSegments[i - 1], 0,0,0,0, -1>;
+		// construct full path
+		str p = "";
+		for(s <- [0..i+1]){
+			p += "/" + pathSegments[s];
+		}
+	
+		tup = <i, pathSegments[i], pathSegments[i - 1], 0,0,0,0, p, -1>;
 		result += tup;
 	}
 	// Always add the root node
-	result += <0, pathSegments[0], "", 0, 0, 0, 0, -1>;
+	result += <0, pathSegments[0], "", 0, 0, 0, 0, "/" + pathSegments[0], -1>;
 	return result;
 }
