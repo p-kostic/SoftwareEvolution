@@ -41,16 +41,24 @@ d3.csv('./data.csv').then(data => {
                   .enter().append("circle")
                     .style("fill", function(d) { return color(d.depth) })
                     .attr("class", function(d) { return "node" + (!d.children ? " node--leaf" : d.depth ? "" : " node--root"); })
-                    .on("mouseover", (x: any) => subject.next(x.data.CCid) )
-                    .on("mouseout", () => subject.next(-1))
-                    .on("click", function(d) { 
+                    .on("mouseover", (x: any) => {
+                         d3.select("h2").text(x.data.fullPath);
+                         return subject.next(x.data.CCid);
+                    })
+                    .on("mouseout", (x: any) => {
+                      if (!x.anscestors) {
+                        d3.select("h2").text()
+                      }
+                      return subject.next(-1);
+                    })
+                    .on("click", function(d: any) { 
                         if (focus !== d && d.children) 
                           zoom(d),
                           d3.event.stopPropagation();
                           if(((<any>d).data).CCid != -1){
-                              requestData(((<any>d).data).fullPath, ((<any>d).data).beginLine, ((<any>d).data.endLine)).then(x => {     
+                              requestData(d.data.fullPath, d.data.beginLine, d.data.endLine).then(x => {     
                                 if(codeViewer != null){
-                                    codeViewer.html(marked("```javascript \n" + x.lines + "```", {highlight: (c, lang) => { return highlight.highlightAuto(c).value; }}));//highlight.highlight("java", c).value }});
+                                    codeViewer.html(marked("```javascript \n" + x.lines + "```", {highlight: (c, lang) => { return highlight.highlightAuto(c).value; }}));
                                 }   
                             });
                           }
