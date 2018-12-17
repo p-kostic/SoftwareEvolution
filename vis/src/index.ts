@@ -1,6 +1,8 @@
 // import * as $ from "jquery";
 import * as d3 from "d3";
 import { BehaviorSubject } from 'rxjs';
+import * as marked from 'marked';
+import * as highlight from 'highlight.js'
 
 let width = 960;
 let height = 960;
@@ -31,7 +33,15 @@ var r = 720,
 // Get data from csv file and call functions from promise. 
 // Can only be used in promise. Thus, it dictates program flow
 d3.csv('./data.csv').then(data => {
-    
+    const codeViewer = d3.select("body").append("div").attr("id", "codeViewer");
+    const htmlObject = document.getElementById("codeViewer");
+
+    requestData().then(x => {     
+        if(codeViewer != null){
+            codeViewer.html(marked("```javascript \n" + x.lines + "```", {highlight: (c, lang) => { return highlight.highlightAuto(c).value; }}));//highlight.highlight("java", c).value }});
+        }   
+    });
+
     let classes: number[] = <any[]>data.map(x => x["CCid"]);
     
     var color = d3.scaleSequential(d3.interpolateBlues)
@@ -64,13 +74,13 @@ d3.csv('./data.csv').then(data => {
         svg.selectAll("g").filter(y => ((<any>y).data).CCid != x).select("circle").style("stroke", "");//function(d: any) { return color(d.depth); })
     });
     
-    d3.select(window).on("click", function() { zoom(root); });
+    // d3.select(window).on("click", function() { zoom(root); });
 
     node.append("circle")
         .attr("id", function(d: any) { return "node-" + d.id; })
         .attr("r", function(d: any) { return d.r; })
         .style("fill", function(d: any) { return color(d.depth); })
-        .on("click", function(d: any) { return zoom(node == d ? root : d); });
+        // .on("click", function(d: any) { return zoom(node == d ? root : d); });
 
     var leaf = node.filter(function(d:any) { return !d.children; });
 
@@ -117,3 +127,26 @@ function hovered(hover: any) {
       d3.selectAll(d.ancestors().map(function(d: any) { return d.node; })).classed("node--hover", hover);
     };
   }
+
+
+function requestData(): Promise<GithubFile>{
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", "https://api.github.com/repos/p-kostic/SoftwareEvolution/contents/smallsql0.21_src/src/smallsql/junit/AllTests.java#L10-L20", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = () => { 
+            if(xhr.readyState == XMLHttpRequest.DONE){
+                const response = JSON.parse(xhr.responseText);
+                const f: GithubFile = { lines: atob(response.content) }
+                resolve(f);
+            }
+        }
+
+        xhr.onerror = e => reject(e);
+        xhr.send();
+    });
+}
+
+export interface GithubFile {
+    lines:string;
+}
