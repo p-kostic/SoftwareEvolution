@@ -46,7 +46,7 @@ map[node, set[loc]] RunAlgorithm(loc p, int massThreshold) {
 	resultClones = filterSubclones(resultClones);
 	println("End filtering");
 	
-	calculateAndPrettyPrintMetrics(resultClones, project, csvDestination);
+	calculateAndPrettyPrintMetrics(resultClones, p, csvDestination);
 	return resultClones;
 	
 }
