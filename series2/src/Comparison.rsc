@@ -50,22 +50,8 @@ tuple[loc, loc, real] similarity(node tree1, loc l1, node tree2, loc l2) {
 	// Visit the subtree of the argument nodes
 	// Copy them to lists t1 and t2, such that
 	// We can calculate similarity scores from there
-	list[str] t1 = [];
-	list[str] t2 = [];
-	
-	
-	visit(tree1) {
-		case node x: {
-			str s = removeLocFromString(toString(x));
-			t1 += s;
-		}
-	}
-	visit(tree2) {
-		case node x: {
-			str s = removeLocFromString(toString(x));
-			t2 += s;
-		}
-	}
+	list[str] t1 = nodeToStringArray(tree1);
+	list[str] t2 = nodeToStringArray(tree2);
 	
 	real s = toReal(size(t1 & t2));
 	real l = toReal(size(t1 - t2));
@@ -81,6 +67,18 @@ tuple[loc, loc, real] similarity(node tree1, loc l1, node tree2, loc l2) {
 	return result;
 }
 
+list[str] nodeToStringArray(node n){
+	list[str] t1 = [];
+	visit(n) {
+		case node x: {
+			str s = removeLocFromString(toString(x));
+			t1 += s;
+		}
+	}
+	
+	return t1;
+}
+
 @doc {
 	Removes all locations from a string by visiting a string and  
 	Regex matching on values between piles (i.e. '|') or first occurence of '|)'
@@ -92,4 +90,18 @@ str removeLocFromString(str input){
 	return visit(input) { 
 		case /([|](.*?)[|])([\(](.*?)[\)])|([|](.*?)[|])/ => ""
 	};
+}
+
+// n1 is subtree of n2
+bool isSubTree(node n1, node n2){
+	bool result = true;
+	list[str] t1 = nodeToStringArray(n1);
+	list[str] t2 = nodeToStringArray(n2);
+	
+	// O(n^2), can be faster
+	for(s <- t1){
+		result = result && (s in t2);
+	}
+	
+	return result;
 }

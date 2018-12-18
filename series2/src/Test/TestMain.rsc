@@ -78,13 +78,13 @@ test bool TestPreprocessCase3(){
 }
 
 // Test the correct filtering of subclones
-// BetweenLocSameFile is implicitely tested
 test bool TestFilterSubclonesCase1(){
-	loc a = |project://test|(1,1,<1,0>,<4,0>);
-	loc b = |project://test|(1,1,<2,0>,<3,0>);
+	// Placeholder locations
+	loc a = |project://test|(1,1,<0,0>,<0,0>);
+	loc b = |project://test|(1,1,<0,0>,<0,0>);
 	
-	node cloneA = class("a", [], [], []);
-	node cloneB = class("b", [], [], []);
+	node cloneA = class("a", [], [], [class("b", [], [], [], src=|project://test|)], src=|project://test|);
+	node cloneB = class("b", [], [], [], src=|project://test|);
 	
 	map[node, set[loc]] clones = (cloneA: {a}, cloneB: {b});
 	
@@ -94,31 +94,16 @@ test bool TestFilterSubclonesCase1(){
 	return filteredClones[cloneA] == {a} && size(filteredClones) == 1;
 }
 
-// Test the correct filtering of subclones case 2
-// BetweenLocSameFile is implicitely tested
-test bool TestFilterSubclonesCase2(){
-	loc a = |project://test|(1,1,<1,0>,<4,0>);
-	loc b = |project://test|(1,1,<1,0>,<4,0>);
-	
-	node cloneA = class("a", [], [], []);
-	node cloneB = class("b", [], [], []);
-	
-	map[node, set[loc]] clones = (cloneA: {a}, cloneB: {b});
-	
-	map[node, set[loc]] filteredClones = filterSubclones(clones);
-	
-	// Duplicate clone should be filtered out
-	return size(filteredClones) == 1;
-}
 
 // Test the correct filtering of subclones case 3
 // BetweenLocSameFile is implicitely tested
-test bool TestFilterSubclonesCase3(){
-	loc a = |project://test/src|(1,1,<1,0>,<4,0>);
-	loc b = |project://test|(1,1,<1,0>,<4,0>);
+test bool TestFilterSubclonesCase2(){
+	// Placeholder locations
+	loc a = |project://test|(1,1,<0,0>,<0,0>);
+	loc b = |project://test|(1,1,<0,0>,<0,0>);
 	
-	node cloneA = class("a", [], [], []);
-	node cloneB = class("b", [], [], []);
+	node cloneA = class("a", [], [], [], src=|project://test|);
+	node cloneB = class("b", [], [], [], src=|project://test|);
 	
 	map[node, set[loc]] clones = (cloneA: {a}, cloneB: {b});
 	

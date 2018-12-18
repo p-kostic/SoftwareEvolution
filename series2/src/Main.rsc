@@ -22,9 +22,17 @@ loc project = |project://smallsql0.21_src|;
 // loc project = |project://src|; // <------ project://hsqldb-2.3.1, 
                                   // but only the src folder as specified in the assignment documentation
 loc csvDestination = |project://series2/src/data.csv|;
-void Main() {
-	set[Declaration] asts = createAstsFromEclipseProject(project, true);
-	map[int, list[node]] buckets = Preprocess(asts, 25);
+
+void Main(){
+	RunAlgorithm(project, 25);
+}
+
+map[node, set[loc]] RunAlgorithm(loc p, int massThreshold) {
+
+	set[Declaration] asts = createAstsFromEclipseProject(p, true);
+	println(size(asts));
+	map[int, list[node]] buckets = Preprocess(asts, massThreshold);
+
 	
 	// Print the bucket distribution
 	list[int] dist = [size(buckets[a]) | a <- buckets];
@@ -32,11 +40,15 @@ void Main() {
 	
 	map[node, set[loc]] resultClones = Process(buckets);
 	
+	//iprintln([resultClones[a] | a <- resultClones]);
+	
 	println("Start filtering subclones");
 	resultClones = filterSubclones(resultClones);
 	println("End filtering");
 	
 	calculateAndPrettyPrintMetrics(resultClones, project, csvDestination);
+	return resultClones;
+	
 }
 
 map[node, set[loc]] Process(map[int, list[node]] buckets){
@@ -94,18 +106,26 @@ map[int, list[node]] Preprocess(set[node] asts, int massThreshold){
 
 map[node, set[loc]] filterSubclones(map[node, set[loc]] clones){
 	int i = 0;
+	
+	// For each clone, check against other clones if you are a subclone
 	for(a <- clones){
 		bool subClone = false;
-		loc testLoc = takeOneFrom(clones[a])[0];
 		
 		for(b <- clones){
+			// Ignore reflexive lookups
 			if(a == b){continue;}
 			
-			for(l <- clones[b]){
-				subClone = subClone || betweenLocSameFile(l, testLoc);
+			loc pathA = cast(#loc, a.src);
+			loc pathB = cast(#loc, b.src);
+			
+			// Can only be a subclone if they have the same path
+			if(pathA.path == pathB.path){
+				subClone = subClone || isSubTree(a, b);
 			}
+			
 		}
 		
+		// Delete the clone if it is a subclone
 		if(subClone){
 			i += 1;
 			clones = delete(clones, a);
@@ -115,18 +135,6 @@ map[node, set[loc]] filterSubclones(map[node, set[loc]] clones){
 	return clones;
 }
 
-@doc {
-	Returns true if location l2 is in between location l1 for the same file,
-	otherwise return false
-}
-bool betweenLocSameFile(loc l1, loc l2) {
-	// Between
-	if (l1.path == l2.path) {
-		if (l1.begin.line <= l2.begin.line && l1.end.line >= l2.end.line)
-			return true;
-	}
-	return false;
-}
 
 @doc {
 	Visits the AST and increments an integer for each occurence of a node.
@@ -139,5 +147,12 @@ int countNodes(node ast) {
 			count += 1;}
 	}
 	return count;
+}
+
+public &T cast(type[&T] tp, value v) throws str {
+    if (&T tv := v)
+        return tv;
+    else
+        throw "cast failed";
 }
 
