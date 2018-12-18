@@ -160,7 +160,7 @@ test bool TestRemoveLocFromString() {
 	return true;
 }
 
-
+// Test if a subtree is correctly recognized
 test bool TestIsSubTreeCase1(){
 	node cloneA = class("a", [], [], [class("b", [], [], [], src=|project://test|)], src=|project://test|);
 	node cloneB = class("b", [], [], [], src=|project://test|);
@@ -168,6 +168,7 @@ test bool TestIsSubTreeCase1(){
 	return isSubTree(cloneB, cloneA);
 }
 
+// Test for false positives
 test bool TestIsSubTreeCase2(){
 	node cloneA = class("a", [], [], [class("b", [], [], [], src=|project://test|)], src=|project://test|);
 	node cloneB = class("a", [], [], [], src=|project://test|);
