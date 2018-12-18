@@ -10,15 +10,30 @@ import IO;
 import util::FileSystem;
 import Writer;
 
+  @doc{
+  Synopsis: Given a project location, calculate the total lines of code. 
+  of all files. Identical to the one in series 1 without filtering. Also tested in Series 1
+  }
 public int getLinesOfCode(loc projectLocation) {
 	set[loc] files = {f | f <- visibleFiles(projectLocation), /\.java/ := f.file};
 	return size([*readFileLines(f) | f <- files]);
 }
 
+  @doc{
+  Synopsis: Given a location, calculate the total lines of codes. 
+  
+  Implementation Note: +1 to account for inclusivity
+  }
 public int getLinesFromLoc(loc testLine) {
 	return testLine.end.line - testLine.begin.line + 1;
 }
 
+  @doc{
+  Synopsis: Given a resulting map of clone classes and project and output locations
+  calculate all metrics and print them to the console. 
+  
+  Note: This method will not be tested
+  }
 public void calculateAndPrettyPrintMetrics(map[node, set[loc]] resultClones, loc project, loc csvDestination) {
 	int numberOfCloneClasses = size(resultClones); // Number of clone classes
 	int numberOfClones = 0; // To keep track of the number of clones
