@@ -15,16 +15,13 @@ import Set;
 
 // Own modules
 import utils::HelperFunctions;
-import Writer;
 import Comparison;
 
-//loc project = |project://SimpleJava|;
+// loc project = |project://SimpleJava|;
 loc project = |project://smallsql0.21_src|;
 // loc project = |project://src|; // <------ project://hsqldb-2.3.1, 
                                   // but only the src folder as specified in the assignment documentation
-
 loc csvDestination = |project://series2/src/data.csv|;
-
 void Main() {
 
 	set[Declaration] asts = createAstsFromEclipseProject(project, true);
@@ -41,13 +38,8 @@ void Main() {
 	resultClones = filterSubclones(resultClones);
 	println("End filtering");
 	
-	println("Start Writing");
-	values = [ resultClones[cl] | cl <- resultClones ];
-	OutputData(values, csvDestination);
-	println("End Writing");
-	
+	calculateAndPrettyPrintMetrics(resultClones, project, csvDestination);
 }
-
 
 map[node, set[loc]] Process(map[int, list[node]] buckets){
 	map[node, set[loc]] resultClones = ();
@@ -105,9 +97,6 @@ map[node, set[loc]] filterSubclones(map[node, set[loc]] clones){
 	for(a <- clones){
 		bool subClone = false;
 		loc testLoc = takeOneFrom(clones[a])[0];
-		
-		
-		
 		
 		for(b <- clones){
 			if(a == b){continue;}

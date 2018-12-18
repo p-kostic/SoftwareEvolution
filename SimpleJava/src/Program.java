@@ -1,3 +1,5 @@
 public class Program {
-	public void Method() {}
+	public void Method() {
+		
+	}
 }
