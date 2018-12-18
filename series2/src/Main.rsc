@@ -40,8 +40,6 @@ map[node, set[loc]] RunAlgorithm(loc p, int massThreshold) {
 	
 	map[node, set[loc]] resultClones = Process(buckets);
 	
-	//iprintln([resultClones[a] | a <- resultClones]);
-	
 	println("Start filtering subclones");
 	resultClones = filterSubclones(resultClones);
 	println("End filtering");
