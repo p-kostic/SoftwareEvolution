@@ -60,9 +60,11 @@ map[node, set[loc]] Process(map[int, list[node]] buckets){
 }
 
 
-// Returns a mapping from (node_size : [nodes])
-// Every node is compared to each other node in the same bucket
-// This means that only nodes of equal size are compared.
+@doc {
+    Returns a mapping from (node_size : [nodes])
+    Every node is compared to each other node in the same bucket
+    This means that only nodes of equal size are compared.
+}
 map[int, list[node]] Preprocess(set[node] asts, int massThreshold){
 	map[int, list[node]] buckets = ();
 	
@@ -113,7 +115,10 @@ map[node, set[loc]] filterSubclones(map[node, set[loc]] clones){
 	return clones;
 }
 
-// True if l2 inbetween l1 for the same file
+@doc {
+	Returns true if location l2 is in between location l1 for the same file,
+	otherwise return false
+}
 bool betweenLocSameFile(loc l1, loc l2) {
 	// Between
 	if (l1.path == l2.path) {
@@ -123,6 +128,10 @@ bool betweenLocSameFile(loc l1, loc l2) {
 	return false;
 }
 
+@doc {
+	Visits the AST and increments an integer for each occurence of a node.
+	Returns the size of the AST for each node.
+}
 int countNodes(node ast) {
 	int count = 0;
 	visit(ast) {

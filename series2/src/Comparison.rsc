@@ -35,7 +35,16 @@ map[node, set[loc]] CompareBucket(list[node] bucket, map[node, set[loc]] clones)
 	return clones;
 }
 
-
+@doc {
+	Synopsis: Calculates the similarity according to the specifications of Baxter et. al (1998)
+	
+	Baxter, I. D., Yahin, A., Moura, L., Sant'Anna, M., & Bier, L. (1998, November). 
+	Clone detection using abstract syntax trees. In Software Maintenance,
+	1998. Proceedings., International Conference on (pp. 368-377). IEEE.
+	
+	However, we normalize the node by replacing substrings to make nodes generic 
+	before we calculate the similariy measure.
+}
 tuple[loc, loc, real] similarity(node tree1, loc l1, node tree2, loc l2) {
 	tuple[loc, loc, real] result;
 	// Visit the subtree of the argument nodes
@@ -72,6 +81,13 @@ tuple[loc, loc, real] similarity(node tree1, loc l1, node tree2, loc l2) {
 	return result;
 }
 
+@doc {
+	Removes all locations from a string by visiting a string and  
+	Regex matching on values between piles (i.e. '|') or first occurence of '|)'
+	since |project://test| can be specified as a location, but 
+	|project://test|(1,1,<1,0>,<2,0>) is also a valid location.
+	Using regex OR, a single visit is sufficient to match both cases.
+}
 str removeLocFromString(str input){
 	return visit(input) { 
 		case /([|](.*?)[|])([\(](.*?)[\)])|([|](.*?)[|])/ => ""
