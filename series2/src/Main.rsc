@@ -26,40 +26,16 @@ loc project = |project://smallsql0.21_src|;
 loc csvDestination = |project://series2/src/data.csv|;
 
 void Main() {
-	//list[str] lines = getLinesOfCode(project);
-	//int totalLOC = size(lines);
-	
-	datetime begin = now();
-	
 
 	set[Declaration] asts = createAstsFromEclipseProject(project, true);
 	
-	println(size(asts));
-	map[int, list[node]] rawbuckets = Preprocess2(asts);
-	map[int, list[node]] buckets = (b : rawbuckets[b] | b <- rawbuckets, size(rawbuckets[b]) > 1);
+	map[int, list[node]] buckets = Preprocess(asts, 25);
 	
-	list[int] keys = sort(domain(buckets));
-	
-	//println(keys);
-	//return;
-	
+	// Print the bucket distribution
 	list[int] dist = [size(buckets[a]) | a <- buckets];
 	iprintln(dist);
 	
-	map[node, set[loc]] resultClones = ();
-	int s = size(buckets);
-	int counter = 0;
-	for(i <- [(size(keys) - 1)..-1]){
-		Duration runningTime = createDuration(begin,now());
-		println("<counter>/<s> with size <size(buckets[keys[i]])> and time <toString(runningTime.minutes)>:<(runningTime.seconds)>");
-		resultClones = CompareBucket(buckets[keys[i]], resultClones);
-		counter += 1;
-		
-		if(size(resultClones) == 10){
-			break;
-		}
-		
-	}
+	map[node, set[loc]] resultClones = Process(buckets);
 	
 	println("Start filtering subclones");
 	resultClones = filterSubclones(resultClones);
@@ -72,10 +48,32 @@ void Main() {
 	
 }
 
-// TODO:
-// - Buckets alleen  gelijke grote bevatten van subtrees
-//   Dus |b| = |unieke subtree sizes|
-map[int, list[node]] Preprocess2(set[Declaration] asts){
+
+map[node, set[loc]] Process(map[int, list[node]] buckets){
+	map[node, set[loc]] resultClones = ();
+	list[int] keys = sort(domain(buckets));
+
+	// Variables for statistics
+	datetime begin = now(); // Measure process time
+	int s = size(buckets);  // Measure how many buckets left
+	int counter = 0;	
+	
+	// Traverse the buckets, biggest nodes first
+	for(i <- [(size(keys) - 1)..-1]){
+		Duration runningTime = createDuration(begin,now());
+		println("<counter>/<s> with size <size(buckets[keys[i]])> and time <toString(runningTime.minutes)>:<(runningTime.seconds)>");
+		resultClones = CompareBucket(buckets[keys[i]], resultClones);
+		counter += 1;
+	}
+	
+	return resultClones;
+}
+
+
+// Returns a mapping from (node_size : [nodes])
+// Every node is compared to each other node in the same bucket
+// This means that only nodes of equal size are compared.
+map[int, list[node]] Preprocess(set[node] asts, int massThreshold){
 	map[int, list[node]] buckets = ();
 	
 	for (ast <- asts) {
@@ -84,7 +82,7 @@ map[int, list[node]] Preprocess2(set[Declaration] asts){
 				if(("src" in getKeywordParameters(n))){
 					int nn = countNodes(n);
 					
-					if(nn > 2){
+					if(nn > massThreshold){
 						if(nn in buckets){
 							buckets[nn] += n;
 						}else{
@@ -96,8 +94,10 @@ map[int, list[node]] Preprocess2(set[Declaration] asts){
 		}
 		
 	}
-	
-	return buckets;
+
+	// Filter out all singular buckets (they can't compare to anything then themselves)	
+	map[int, list[node]] filteredBuckets = (b : buckets[b] | b <- buckets, size(buckets[b]) > 1);
+	return filteredBuckets;
 }
 
 map[node, set[loc]] filterSubclones(map[node, set[loc]] clones){

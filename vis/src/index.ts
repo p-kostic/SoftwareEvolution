@@ -129,7 +129,7 @@ function requestData(path: string, beginLine: number, endLine: number): Promise<
                 // Only retrieve lines that are in the copy range
                 let i = 0;
                 for(i = 0; i < lines.length; i++ ){
-                    if(i >= beginLine && i <= endLine){
+                    if(i >= beginLine - 1 && i <= endLine - 1){
                         filteredLines.push(lines[i]);
                     }
                 }

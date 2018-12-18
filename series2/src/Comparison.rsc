@@ -23,7 +23,7 @@ map[node, set[loc]] CompareBucket(list[node] bucket, map[node, set[loc]] clones)
 	map[node, set[loc]] result = ();
 	for(<n1, n2> <- relation){
 		sim = similarity(n1, n1.src, n2, n2.src);
-		if(sim[2] > 0.99){
+		if(sim[2] == 1.0){
 			// Add clone tuple to clone class
 			if(n1 in clones){
 				clones[n1] += { sim[0], sim[1] };
