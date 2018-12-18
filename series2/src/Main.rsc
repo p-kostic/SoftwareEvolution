@@ -33,6 +33,7 @@ void Main() {
 	
 	map[int, list[node]] buckets = Preprocess(asts, 25);
 	
+	// Print the bucket distribution
 	list[int] dist = [size(buckets[a]) | a <- buckets];
 	iprintln(dist);
 	
@@ -55,7 +56,7 @@ map[node, set[loc]] Process(map[int, list[node]] buckets){
 	list[int] keys = sort(domain(buckets));
 
 	// Variables for statistics
-	datetime begin = now(); // Measure process tim 
+	datetime begin = now(); // Measure process time
 	int s = size(buckets);  // Measure how many buckets left
 	int counter = 0;	
 	
@@ -72,7 +73,8 @@ map[node, set[loc]] Process(map[int, list[node]] buckets){
 
 
 // Returns a mapping from (node_size : [nodes])
-// where 
+// Every node is compared to each other node in the same bucket
+// This means that only nodes of equal size are compared.
 map[int, list[node]] Preprocess(set[node] asts, int massThreshold){
 	map[int, list[node]] buckets = ();
 	
