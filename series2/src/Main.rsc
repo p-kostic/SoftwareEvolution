@@ -23,9 +23,7 @@ loc project = |project://smallsql0.21_src|;
                                   // but only the src folder as specified in the assignment documentation
 loc csvDestination = |project://series2/src/data.csv|;
 void Main() {
-
 	set[Declaration] asts = createAstsFromEclipseProject(project, true);
-	
 	map[int, list[node]] buckets = Preprocess(asts, 25);
 	
 	// Print the bucket distribution
